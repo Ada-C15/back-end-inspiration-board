@@ -27,9 +27,17 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+
     # Register Blueprints here
     # from .routes import example_bp
     # app.register_blueprint(example_bp)
+
+    # from .routes import task_list_bp
+    # app.register_blueprint(task_list_bp)
+
+    # from .routes import goals_bp
+    # app.register_blueprint(goals_bp)
+    
 
     CORS(app)
     return app

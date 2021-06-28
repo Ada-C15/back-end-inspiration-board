@@ -21,9 +21,15 @@ def get_all_boards():
     for board in boards:
         # What do we want the response to include?
         # This implementation throws a 'Board is not subscriptable' error. 
-        boards_list.append(board["title"])
-    sorted_boards_list = sorted(boards_list, key = lambda i: i['id'])
+        # boards_list.append(board["title"])
+        boards_list.append(board.get_resp())
+
+    sorted_boards_list = sorted(boards_list, key = lambda board: board["board_id"])
+
+
     return jsonify(sorted_boards_list), 200
+    # return jsonify(boards_list), 200
+
 
 # Create a board
 @boards_bp.route("", methods=["POST"])

@@ -25,7 +25,7 @@ def create_app():
 
     from app.models.board import Board
     from app.models.card import Card
-    
+
     # Register Blueprints here
     from .routes import boards_bp, cards_bp
     app.register_blueprint(boards_bp)

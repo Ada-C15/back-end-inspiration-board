@@ -51,6 +51,7 @@ def add_new_board():
     db.session.commit()
 
     return make_response(new_board.to_json(), 201)
+    
 
 # (read) GET all the cards for a selected board 
 

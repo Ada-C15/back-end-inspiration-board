@@ -51,3 +51,11 @@ def add_card_to_board(board_id):
         return make_response({"details": "Likes_count data invalid"}, 400)
     # likes_count might need to be refactors to default to zero when new card is created!!
 
+@board_bp.route("/<board_id>/cards", methods=["GET"], strict_slashes=False)
+def get_cards_from_board(board_id):
+    cards = Card.query.filter_by(board_id=board_id)
+    if cards:
+        cards_response = [card.to_dict() for card in cards]
+        return make_response({"cards": cards_response}, 200)
+    return make_response("", 200)
+

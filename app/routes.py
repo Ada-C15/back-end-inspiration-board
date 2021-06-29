@@ -66,3 +66,15 @@ def remove_card(card_id):
             "details": (f'Card {card.card_id} successfully deleted from Board {card.board_id}')
         }), 200
     return "", 404
+
+@card_bp.route("/<card_id>/like", methods=["PUT"], strict_slashes=False)
+def add_like_to_card(card_id):
+    card = Card.query.get(card_id)
+    if card:
+        card.likes_count = card.likes_count + 1
+        db.session.commit() 
+        # what is the front end's response formatting preference???
+        return jsonify({
+            "details": (f'Card {card.card_id} now has {card.likes_count} likes')
+        }), 200
+    return "", 404

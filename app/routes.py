@@ -3,17 +3,8 @@ from app.models.card import Card
 from app.models.board import Board
 from app import db
 
-# example_bp = Blueprint('example_bp', __name__)
-# Boards BP
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
-
-
-'''
-Start with making the conventional endpoints for:
-Getting a list of all boards
-Creating a board
-'''
 
 # Get all boards
 @boards_bp.route("", methods=["GET"])
@@ -39,9 +30,11 @@ def create_board():
     return (jsonify(f"Posted new board {new_board.title}!"),201)
 
 
+
 '''
 Next: Create, Read, and Delete Cards
 '''
+# Gets all cards
 @cards_bp.route("", methods=["GET"])
 def get_all_card():
     query = Card.query.order_by(Card.card_id.asc())
@@ -49,18 +42,31 @@ def get_all_card():
     for card in query:
         cards_list.append(card.get_resp())
     return jsonify(cards_list), 200 
-    
-# How should we ingest the board_id?
+
+# Get all cards associated with board
+@cards_bp.route("/<board_id>", methods=["GET"])
+def get_card(board_id):
+    board = Board.query.get(board_id)
+    cards_list = []
+    for card in board.cards:
+        board_card = Card.query.get(card.card_id)
+
+        cards_list.append(board_card.get_resp())
+    return (jsonify(cards_list),201)
+
+# Create a card for a board
 @cards_bp.route("/<board_id>", methods=["POST"])
 def create_card(board_id):
     request_body = request.get_json()
     new_card = Card(
-        message=request_body["message"]
-        # board_id=
-        # likes has a default.
+        message=request_body["message"],
+        board_id=board_id
     )
     db.session.add(new_card)
     db.session.commit()
-    return (jsonify(f"Posted new board {new_card.board_id}!"),201)
+    return (jsonify(f"Posted new card on board {new_card.board_id}!"),201)
 
-
+# # Delete a card 
+# @cards_bp.route("/<board_id>", methods=["DELETE"])
+# def delete_card(board_id):
+#     pass

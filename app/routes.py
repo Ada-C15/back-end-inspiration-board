@@ -6,6 +6,8 @@ from app import db
 # example_bp = Blueprint('example_bp', __name__)
 # Boards BP
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
+cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
+
 
 '''
 Start with making the conventional endpoints for:
@@ -39,3 +41,19 @@ def create_board():
 '''
 Next: Create, Read, and Delete Cards
 '''
+
+@cards_bp.route("", methods=["GET"])
+def get_all_card():
+    query = Card.query.order_by(Card.card_id.asc())
+    cards_list = []
+    for card in query:
+        cards_list.append(card.get_resp())
+
+# @cards_bp.route("", methods=["POST"])
+# def create_card():
+#     request_body = request.get_json()
+#     new_card = Card(
+#         message=request_body["message"],
+#         likes_count
+#     )
+

@@ -13,7 +13,7 @@ card_bp = Blueprint("cards", __name__, url_prefix="/cards")
 
 @board_bp.route("", methods=["POST"])
 def create_a_board(): 
-    request_body = request.get_json()
+    request_body = request.form
 
         
     for board_attribute in ["title","owner"]:
@@ -21,17 +21,14 @@ def create_a_board():
             return jsonify(f'Missing required: {board_attribute}'),400
 
      
-    new_board = Board.from_json(request_body)
+    new_board = Board.from_dict(request_body)
    
     db.session.add(new_board)
     db.session.commit()
 
 
-    response = {
-             "id": new_board.board_id
-
-               }
-    return make_response(jsonify(response), 201)
+    response = jsonify (new_board.as_json())
+    return make_response(response, 201)
 
 
 @board_bp.route("", methods=["GET"])
@@ -76,7 +73,7 @@ def retrieve_all_cards(board_id):
 
 @card_bp.route("", methods=["POST"])
 def create_a_card(): 
-    request_body = request.get_json()
+    request_body = request.form
         
     for card_attribute in ["message","board_id"]:
         if card_attribute not in request_body:
@@ -89,7 +86,7 @@ def create_a_card():
         return jsonify(f'Message empty'), 400
         
      
-    new_card= Card.from_json(request_body)
+    new_card= Card.from_dict(request_body)
    
     db.session.add(new_card)
     db.session.commit()
@@ -126,7 +123,4 @@ def add_like_to_single_card(card_id):
 
     card.likes_count += 1
     db.session.commit()
-    return jsonify (
-        {
-            "id": card_id
-        })        
+    return jsonify (card.as_json())

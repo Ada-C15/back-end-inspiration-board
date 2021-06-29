@@ -77,17 +77,35 @@ def board_cards(id):
     cards = []
     for card in board.cards:
         card_json = {
-
+            'id': card.card_id,
+            'message': card.message,
+            'like_count': card.like_count,
+            'is_complete': bool(card.completed_at)
         }
+        card.append(card_json)
+
+    response_body = {
+        'id': board.id,
+        'title': board.title,
+        'owner': board.owner
+    }
+
+    return jsonify(response_body), 200
 
 ###################### Part E: DELETE  /cards/<card_id> endpoint ##################
 # e. DELETE /cards/<card_id>
 # Request: card_id
 # Response:  successfully delete message ?
 
-@card_bp.route("/<int:id", methods=["DELETE"])
+@card_bp.route("/<int:id>", methods=["DELETE"])
 def delete_card(id):
-    pass
+    card = Card.query.get(id)
+    if card == None:
+        return make_response(f"Card {id} not found", 404)
+    db.session.delete(card)
+    db.session.commit()
+    return make_response({"details": f"Card {id} \"{card.title}\" successfully deleted"}, 200)
+
 
 
 ###################### Part F: PUT  /cards/<card_id>/like endpoint ##################
@@ -97,4 +115,10 @@ def delete_card(id):
 
 @card_bp.route("/<int:id>/like", methods=["PUT"])
 def update_card(id):
-    pass
+    card = Card.query.get(id)
+    if not card:
+        return make_response('Goal not found.', 404)
+    request_body = request.get_json()
+    card.title = request_body['title']
+    db.session.commit()
+    return jsonify({'card': card.to_json()}), 200

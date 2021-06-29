@@ -38,6 +38,22 @@ def create_board():
         }
         return make_response(response,400)
 
+
+@boards_bp.route("", methods=["GET"], strict_slashes=False)
+def get_boards():
+    boards_response = []
+    boards = Board.query.all()
+    for board in boards:
+        boards_response.append(board.to_json())
+    return jsonify(boards_response), 200
+
+
+@boards_bp.route("/<board_id>", methods=["GET"], strict_slashes=False)
+def get_one_board(board_id):
+    board = Board.query.get_or_404(board_id, "Incorrect id")
+    return make_response(board.to_json(), 200)
+
+
 # ***************************** CARD ROUTES ***********************
 
 @cards_bp.route("/<board_id>", methods=["POST"], strict_slashes=False)

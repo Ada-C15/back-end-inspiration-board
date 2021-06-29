@@ -6,6 +6,7 @@
 
 from flask import Blueprint, request, jsonify, make_response
 from app import db
+from app.models.board import Board
 
 # example_bp = Blueprint('example_bp', __name__)
 boards_bp = Blueprint('board', __name__, url_prefix='/boards')
@@ -16,11 +17,27 @@ boards_bp = Blueprint('board', __name__, url_prefix='/boards')
 
 @boards_bp.route("", methods=["GET"], strict_slashes=False)
 def get_boards():
-  pass
+  boards = Board.query.all()
+  return make_response({'boards_list' : [board.to_dict() for board in boards]}, 200)
+  # returns a json with a single key, the value is a list of all the boards info (id, title, owner, and list of cards)
 
 @boards_bp.route("", methods=["POST"], strict_slashes=False)
 def post_boards():
-  pass
+  request_body = request.get_json()
+
+  try:
+    new_board = Board(
+      title=request_body["title"],
+      owner=request_body["owner"]
+    )
+  except KeyError:
+    return make_response({'details' : 'Missing data'}, 400)
+
+  db.session.add(new_board)
+  db.session.commit()
+
+  return make_response(new_board.to_dict(), 201)
+  # returns all the info about the new board, including it's assigned id, no cards yet
 
 
 # ==============================================================

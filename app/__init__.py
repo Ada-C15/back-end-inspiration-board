@@ -14,8 +14,13 @@ def create_app():
   app = Flask(__name__)
   app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+  # if test_config is None:
   app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "SQLALCHEMY_DATABASE_URI")
+      "SQLALCHEMY_DATABASE_URI")
+  # else:
+  #   app.config["TESTING"] = True
+  #   app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+  #     "SQLALCHEMY_TESTDB_URI")
 
   # Import models here for Alembic setup
   # from app.models.ExampleModel import ExampleModel

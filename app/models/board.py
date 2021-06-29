@@ -6,7 +6,7 @@ class Board(db.Model):
     title = db.Column(db.String)
     owner = db.Column(db.String)
     # parent
-    cards = relationship("Card", backref="board")
+    cards = relationship("Card", backref="board", lazy=True)
 
     def get_resp(self):
         return{

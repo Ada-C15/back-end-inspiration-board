@@ -83,7 +83,16 @@ def delete_card(card_id):
             (f"Card {card_id} successfully deleted")
             }
 
-# NOT PRIORITY, BUT NICE TO HAVE TODAY
-# # PUT / cards / <board_id> / like
-# @card_bp.route("cards/<board_id>/like", methods=["PUT"])
-# def like_card(board_id):
+
+# PUT / cards / <card_id> / like
+@card_bp.route("/<card_id>/like", methods=["PUT"])
+def like_card(card_id):
+    card = Card.query.get(card_id)
+    request_body = request.get_json()
+
+    card.likes_count = request_body["likes_count"]
+    card.likes_count += 1
+    db.session.commit()
+
+    return make_response(card.card_json())
+

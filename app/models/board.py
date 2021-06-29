@@ -7,3 +7,10 @@ class Board(db.Model):
     title = db.Column(db.String)
     owner = db.Column(db.String)
     card_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=True)
+
+    def to_json(self):
+        return{
+            "id": self.board_id,
+            "title": self.title,
+            "owner": self.owner
+        }

@@ -3,12 +3,15 @@ from app import db
 import requests
 from flask import jsonify
 from .models.board import Board
+from app.models.card import Card
 from dotenv import load_dotenv
 from sqlalchemy import exc
 
+load_dotenv()
 
 # example_bp = Blueprint('example_bp', __name__)
 boards_bp = Blueprint("board", __name__, url_prefix="/boards")
+cards_bp = Blueprint("cards", __name__, url_prefix="cards")
 
 
 """
@@ -34,3 +37,19 @@ def create_board():
             "error": "Invalid data"
         }
         return make_response(response,400)
+
+# ***************************** CARD ROUTES ***********************
+
+@cards_bp.route("/<board_id>", methods=["POST"], strict_slashes=False)
+def post_card():
+    request_body = request.get_json()
+    new_card = Card(message= request_body["message"])
+    
+    if new_card["message"] == "" \
+        or type(new_card["message"]) is not str:
+        return 404
+    else:
+        db.session.add(new_card)
+        db.session.commit()
+        return make_response
+

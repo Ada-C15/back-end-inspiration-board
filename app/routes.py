@@ -20,3 +20,9 @@ def create_board():
     
     elif "owner" not in request_body:
         return make_response({"details": "Owner data invalid"}, 400)
+
+@board_bp.route("", methods=["GET"], strict_slashes=False)
+def get_boards():
+    boards = Board.query.all()
+    boards_response = [board.to_dict() for board in boards]
+    return make_response(jsonify(boards_response), 200)

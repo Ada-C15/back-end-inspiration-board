@@ -7,7 +7,8 @@ from app.models.card import Card
 boards_bp = Blueprint('boards', __name__, url_prefix="/boards")
 cards_bp = Blueprint('cards', __name__, url_prefix="/cards")
 
-######## BOARDS CRUD ########
+
+############################################## BOARDS CRUD ##########################################################
 
 # GET /boards
 @boards_bp.route("", methods=["GET"])
@@ -83,11 +84,39 @@ def get_cards_for_specific_board(id):
 
 # POST /boards/id/cards
 @boards_bp.route("/<id>/cards", methods=["POST"])
-def create_new_card():
-    pass
+def create_new_card(id):
+    """
+    Request body: A JSON dictionary with a single key-value pair ("message": <message_body>)
+    Action: Creates a new entry in cards table with default (0) like_count, message provided in request body,
+    and board id provided in route.
+    Response: 201 Created; response body is JSON dictionary with keys "card_id", "message", "likes_count", and "board_id"
+    """
+    board = Board.query.get(id)
+    if board is None:
+        return make_response("", 404)
+    
+    request_body = request.get_json()
+
+    try:
+        new_card = Card(message=request_body['message'],
+                            board_id=id)
+    except KeyError:
+        return make_response({
+            "details": "invalid data"
+        }, 400)
+
+    db.session.add(new_card)
+    db.session.commit(new_card)
+
+    response = {
+        "card": new_card.to_json()
+    }
+
+    return make_response(jsonify(response), 201)
 
 
-######## CARDS CRUD #########
+
+############################################## CARDS CRUD ##########################################################
 
 # GET /cards/{id}
 @cards_bp.route("/cards/<id>", methods=["GET"])

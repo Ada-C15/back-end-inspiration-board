@@ -9,7 +9,7 @@ import requests
 
 
 # example_bp = Blueprint('example_bp', __name__)
-board_bp = Blueprint("board", __name__, url_prefix="/boards")
+board_bp = Blueprint("boards", __name__, url_prefix="/boards")
 card_bp = Blueprint("cards", __name__, url_prefix="/cards")
 
 # GET / boards
@@ -18,7 +18,7 @@ def get_boards():
     boards = Board.query.all()
     boards_response = []
     for board in boards:
-      boards_response.append(board.board_json())
+        boards_response.append(board.board_json())
 
     return jsonify(boards_response)
 
@@ -30,7 +30,7 @@ def create_board():
         return make_response({"details": "Invalid data"}, 400)
 
     new_board = Board(title=request_body["title"],
-                      owner=request_body["owner"])
+                    owner=request_body["owner"])
 
     db.session.add(new_board)
     db.session.commit()
@@ -42,11 +42,21 @@ def create_board():
 def get_cards_for_board(board_id):
     board = Board.query.get(board_id)
 
-    # if board is None:
-    #     return ("Board does not exist (1)", 404)
+    if board is None:
+        return ("Board does not exist (1)", 404)
 
+    cards = Card.query.filter_by(board=board_id)
+    card_list = []
+    for card in cards:
+        card_list.append(card.board_json())
 
+    return make_response({
+        "id": board.board_id,
+        "title": board.title,
+        "cards": card_list
+    }, 200)
 
+# Priority for Today
 # POST / boards / <board_id> / cards
 # @board_bp.route("<board_id>/cards", methods=["POST"])
 # def create_cards_for_board(board_id):

@@ -25,6 +25,7 @@ def get_boards():
 @board_bp.route("", methods=["POST"])
 def create_board():
     request_body = request.get_json()
+
     board_properties = ["title", "owner"]
     for prop in board_properties:
         if prop not in request_body:
@@ -38,28 +39,22 @@ def create_board():
 
     return make_response(new_board.board_json())
 
-# PRIORITY FOR TODAY
+# (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 # GET / boards / <board_id> / cards 
-# @board_bp.route("/<board_id>/cards", methods=["GET"])
-# def get_cards_for_board(board_id):
-#     board = Board.query.get(board_id)
+@board_bp.route("/<board_id>/cards", methods=["GET"])
+def get_cards_for_board(board_id):
+    board = Board.query.get(board_id)
 
-#     if board is None:
-#         return ("Board does not exist (1)", 404)
+    # if board is None:
+    #     return ("Board does not exist", 404)
 
-#     cards = Card.query.filter_by(board=board_id)
-#     card_list = []
-#     for card in cards:
-#         card_list.append(card.board_json())
+    if board is None:
+        return make_response("Board does not exist", 404)
 
-#     return make_response({
-#         "id": board.board_id,
-#         "title": board.title,
-#         "cards": card_list
-#     }, 200)
+    return make_response(board.return_board_cards())
 
-
-# POST / boards / <board_id> / cards - (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
+# POST / boards / <board_id> / cards 
+# (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 @board_bp.route("/<board_id>/cards", methods=["POST"])
 def create_cards_for_board(board_id):
     request_body = request.get_json()
@@ -74,10 +69,19 @@ def create_cards_for_board(board_id):
 
     return make_response(new_card.card_json())
 
-# NOT PRIORITY, BUT NICE TO HAVE TODAY
+
 # DELETE / cards / <card_id> 
-#@card_bp.route("/<card_id>", methods=["DELETE"])
-#def delete_card(card_id):
+@card_bp.route("/<card_id>", methods=["DELETE"])
+def delete_card(card_id):
+    card = Card.query.get(card_id)
+
+    db.session.delete(card)
+    db.session.commit()
+
+    return {
+            "details":\
+            (f"Card {card_id} successfully deleted")
+            }
 
 # NOT PRIORITY, BUT NICE TO HAVE TODAY
 # # PUT / cards / <board_id> / like

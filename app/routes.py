@@ -35,9 +35,9 @@ def get_boards():
 def add_card_to_board(board_id):
     request_body=request.get_json()
     
-    if "message" in request_body and "likes_count" in request_body:
+    if "message" in request_body:
         new_card = Card(message= request_body["message"],
-                            likes_count= request_body["likes_count"],
+                            likes_count= 0,
                             board_id= int(board_id))
         db.session.add(new_card)
         db.session.commit()    
@@ -47,9 +47,6 @@ def add_card_to_board(board_id):
     elif "message" not in request_body:
         return make_response({"details": "Message data invalid"}, 400)
     
-    elif "likes_count" not in request_body:
-        return make_response({"details": "Likes_count data invalid"}, 400)
-    # likes_count might need to be refactors to default to zero when new card is created!!
 
 @board_bp.route("/<board_id>/cards", methods=["GET"], strict_slashes=False)
 def get_cards_from_board(board_id):

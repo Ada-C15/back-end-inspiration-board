@@ -1,29 +1,26 @@
-# from flask import current_app
 from app import db
-
-
-# Card, table name: card
-# card_id, int, primary key
-# message, string
-# likes_count, int
 
 class Card(db.Model):
     card_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     message = db.Column(db.String, nullable=False)
     likes_count = db.Column(db.Integer, nullable=False) # autoincrement=True?
-    # board = db.Column(db.Integer, db.ForeignKey('board.board_id')) # nullable=False?
-    # creating these tables with no relationship as of now, following instructions
+    board = db.Column(db.Integer, db.ForeignKey('board.board_id')) # nullable=False?
 
 
+# "When the API sends back a card, the HTTP response looks like:"
+# {
+#     "card_id": ...,
+#     "message": ...,
+#     "likes_count": ...,
+#     "board_id": ...
+# }
+# Then...
+# the method below is to return a card in json format:
 
-# just in case like Board:
-#
 # def card_to_json_format(self):
 #     card_to_json = {
-#         "id": self.task_id,
-#         "message": self.title,
-#         "likes_count": self.description,
+#         'card_id': self.card_id,
+#         'message': self.message,
+#         'likes_count': self.likes_count,
+#         'board_id': self.board,
 #     }
-#     if self.board is not None:
-#         card_to_json["board_id"] = self.board
-#     return card_to_json

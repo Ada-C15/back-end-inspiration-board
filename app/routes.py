@@ -59,3 +59,13 @@ def get_cards_from_board(board_id):
         return make_response({"cards": cards_response}, 200)
     return make_response("", 200)
 
+@card_bp.route("/<card_id>", methods=["DELETE"], strict_slashes=False)
+def remove_card(card_id):
+    card = Card.query.get(card_id)
+    if card:
+        db.session.delete(card)
+        db.session.commit()
+        return jsonify({
+            "details": (f'Card {card.card_id} successfully deleted from Board {card.board_id}')
+        }), 200
+    return "", 404

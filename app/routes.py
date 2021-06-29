@@ -91,10 +91,7 @@ def create_a_card():
     db.session.add(new_card)
     db.session.commit()
 
-    response = {
-             "id": new_card.card_id
-
-               }
+    response = new_card.as_json()
     return make_response(jsonify(response), 201)
 
 

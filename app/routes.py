@@ -24,7 +24,6 @@ def get_all_boards():
 
     return jsonify(boards_list), 200
 
-
 # Create a board
 @boards_bp.route("", methods=["POST"])
 def create_board():
@@ -36,3 +35,7 @@ def create_board():
     db.session.add(new_board)
     db.session.commit()
     return (jsonify(f"Posted new board {new_board.title}!"),201)
+
+'''
+Next: Create, Read, and Delete Cards
+'''

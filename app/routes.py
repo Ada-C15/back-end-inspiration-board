@@ -24,7 +24,7 @@ def get_all_boards():
     for board in query:
         boards_list.append(board.get_resp())
 
-    return jsonify(boards_list), 200
+    return jsonify(boards_list), 200 
 
 # Create a board
 @boards_bp.route("", methods=["POST"])
@@ -38,22 +38,29 @@ def create_board():
     db.session.commit()
     return (jsonify(f"Posted new board {new_board.title}!"),201)
 
+
 '''
 Next: Create, Read, and Delete Cards
 '''
-
 @cards_bp.route("", methods=["GET"])
 def get_all_card():
     query = Card.query.order_by(Card.card_id.asc())
     cards_list = []
     for card in query:
         cards_list.append(card.get_resp())
+    return jsonify(cards_list), 200 
+    
+# How should we ingest the board_id?
+@cards_bp.route("/<board_id>", methods=["POST"])
+def create_card(board_id):
+    request_body = request.get_json()
+    new_card = Card(
+        message=request_body["message"]
+        # board_id=
+        # likes has a default.
+    )
+    db.session.add(new_card)
+    db.session.commit()
+    return (jsonify(f"Posted new board {new_card.board_id}!"),201)
 
-# @cards_bp.route("", methods=["POST"])
-# def create_card():
-#     request_body = request.get_json()
-#     new_card = Card(
-#         message=request_body["message"],
-#         likes_count
-#     )
 

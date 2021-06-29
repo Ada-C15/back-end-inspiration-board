@@ -11,7 +11,7 @@ load_dotenv()
 
 # example_bp = Blueprint('example_bp', __name__)
 boards_bp = Blueprint("board", __name__, url_prefix="/boards")
-cards_bp = Blueprint("cards", __name__, url_prefix="cards")
+cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
 
 
 """
@@ -41,15 +41,18 @@ def create_board():
 # ***************************** CARD ROUTES ***********************
 
 @cards_bp.route("/<board_id>", methods=["POST"], strict_slashes=False)
-def post_card():
+def post_card(board_id):
     request_body = request.get_json()
     new_card = Card(message= request_body["message"])
     
-    if new_card["message"] == "" \
-        or type(new_card["message"]) is not str:
+    if new_card.message == "" \
+        or type(new_card.message) is not str:
         return 404
     else:
         db.session.add(new_card)
         db.session.commit()
-        return make_response
+        response = {
+            "id" : new_card.card_id
+        }
+        return make_response(response, 201)
 

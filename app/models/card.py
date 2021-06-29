@@ -5,4 +5,4 @@ class Card(db.Model):
     message = db.Column(db.String)
     likes_count = db.Column(db.Integer)
     # child
-    board_id = db.Column(db.Integer, db.ForeignKey('board_id.id'))
+    board_id = db.Column(db.Integer, db.ForeignKey('board.board_id'))

@@ -51,11 +51,48 @@ def add_new_board():
     db.session.commit()
 
     return make_response(new_board.to_json(), 201)
-    
+
+
+# (create) POST a new card for a selected board by id 
+
+# def create_goal():
+#     request_body = request.get_json()
+#     if "title" in request_body:
+#         new_goal = Goal(
+#             title=request_body["title"])
+#         db.session.add(new_goal)
+#         db.session.commit()
+#         return jsonify({"goal": new_goal.to_dict()}), 201
+
+#     new_goal = make_response({"details": "Invalid data"}, 400)
+
+# @boards_bp.route("/<board_id>/cards", methods=["POST"], strict_slashes=False)
+# def add_cards_to_goal(board_id):
+
+#     request_body = request.get_json()
+#     tasks = request_body["task_ids"]
+#     # (db)
+#     goal = Goal.query.get(goal_id)
+#     for task_id in tasks:
+#         task_db_object = Task.query.get(task_id)
+#         goal.tasks.append(task_db_object)
+#         # task_db_object.goal_id = int(goal_id)
+#         db.session.commit()
+#     return {"id": goal.goal_id,
+#             "task_ids": tasks}, 200
+
+
 
 # (read) GET all the cards for a selected board 
 
-# (create) POST a new card for a selected board by id 
+@boards_bp.route("/<board_id>/cards", methods=["GET"], strict_slashes=False)
+def get_cards_of_one_board(board_id):
+    board = Board.query.get_or_404(board_id)
+    board_response = board.to_json()
+    board_response["cards"] = [card.to_json() for card in board.cards]
+    return jsonify(board_response), 200
+
+
 
 
 #=====================================================#

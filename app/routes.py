@@ -87,7 +87,7 @@ def create_a_card():
 
 
     if request_body["message"] == "":
-        return jsonify(f'Message empty'), 400
+        return jsonify(f'Message empty, please enter a valid message'), 400
 
 
     new_card= Card.from_json(request_body)
@@ -96,8 +96,9 @@ def create_a_card():
     db.session.commit()
 
     response = {
-            "id": new_card.card_id
-
+            "id": new_card.card_id,
+            "message": new_card.message,
+            "likes_count": new_card.likes_count 
             }
     return make_response(jsonify(response), 201)
 
@@ -129,5 +130,5 @@ def add_like_to_single_card(card_id):
     db.session.commit()
     return jsonify (
         {
-            "id": card_id
+            "id": card_id,
         })

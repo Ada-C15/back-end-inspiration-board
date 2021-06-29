@@ -132,8 +132,24 @@ def get_single_card(id):
 
 # PATCH /card/{id}/like
 @cards_bp.route("/cards/<id>/like", methods=["PATCH"]) #*** simon used a PUT for this
-def like_card():
-    pass
+def like_card(id):
+    """
+    Request body: none
+    Action: Increases likes_count by 1 if card exists and updates database
+    Response: A JSON dictionary with key "card", whose value is another dictionary detailing updated card info,
+    with keys "card_id", "message", "likes_count", and "board_id"
+    """
+    card = Card.query.get(id)
+    if card is None:
+        return make_response("", 404)
+
+    card.likes_count += 1
+
+    db.session.commit()
+
+    return {
+        "card": card.to_json()
+    }
 
 
 # DELETE /cards/{id}

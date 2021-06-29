@@ -42,38 +42,15 @@ def create_board():
 def get_cards_for_board(board_id):
     board = Board.query.get(board_id)
 
-    if board is None:
-        return ("Board does not exist (1)", 404)
+    # if board is None:
+    #     return ("Board does not exist (1)", 404)
 
-    cards = Card.query.filter_by(board=board_id)
-    card_list = []
-    for card in cards:
-      card_list.append(card.board_json())
 
-    return make_response({
-      "id": board.board_id,
-      "title": board.title,
-      "owner": board.owner,
-      "card": card_list
-    }, 200)
 
 # POST / boards / <board_id> / cards
-@board_bp.route("<board_id>/cards", methods=["POST"])
-def create_cards_for_board(board_id):
-    board = Board.query.get(board_id)
+# @board_bp.route("<board_id>/cards", methods=["POST"])
+# def create_cards_for_board(board_id):
 
-    if board is None:
-        return ("Board does not exist (2)", 404)
-    
-    request_body = request.get_json()
-    for card_id in request_body["card_id"]:
-      card = Card.query.get(card_id)
-      card.board = board.board_id
-
-    return make_response({
-      "id": board.board_id,
-      "card_id": request_body["card_id"]
-      }, 200)
 
 # DELETE / cards / <card_id> 
 #@card_bp.route("/<card_id>", methods=["DELETE"])
@@ -82,3 +59,4 @@ def create_cards_for_board(board_id):
 
 # # PUT / cards / <board_id> / like
 # @card_bp.route("cards/<board_id>/like", methods=["PUT"])
+# def like_card(board_id):

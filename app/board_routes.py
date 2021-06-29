@@ -45,16 +45,34 @@ def post_boards():
 # ==============================================================
 
 @boards_bp.route("/<board_id>", methods=["GET"], strict_slashes=False)
-def get_board():
-  pass
+def get_board(board_id):
+  board = Board.query.get_or_404(board_id)
+  return make_response(board.to_dict(), 200)
+  # returns json with id, title, owner, cards list
+
 
 @boards_bp.route("/<board_id>", methods=["PUT"], strict_slashes=False)
-def put_board():
-  pass
+def put_board(board_id):
+  board = Board.query.get_or_404(board_id)
+  request_body = request.get_json()
+
+  try:
+    board.title=request_body["title"],
+    board.owner=request_body["owner"]
+  except KeyError:
+    return make_response({'details' : 'Missing data'}, 400)
+
+  db.session.commit()
+  return make_response(board.to_dict(), 200)
+  # returns json with id, title, owner, cards list
 
 @boards_bp.route("/<board_id>", methods=["DELETE"], strict_slashes=False)
-def delete_board():
-  pass
+def delete_board(board_id):
+  board = Board.query.get_or_404(board_id)
+  db.session.delete(board)
+  db.session.commit()
+  return make_response({'id' : board_id}, 200)
+  # returns the id of the deleted board
 
 
 # ==============================================================

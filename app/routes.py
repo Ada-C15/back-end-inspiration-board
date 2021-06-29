@@ -56,7 +56,7 @@ def get_one_board(board_id):
 
 # ***************************** CARD ROUTES ***********************
 
-@cards_bp.route("/<board_id>", methods=["POST"], strict_slashes=False)
+@boards_bp.route("/<board_id>/cards", methods=["POST"], strict_slashes=False)
 def post_card(board_id):
     request_body = request.get_json()
     new_card = Card(message= request_body["message"])
@@ -71,4 +71,23 @@ def post_card(board_id):
             "id" : new_card.card_id
         }
         return make_response(response, 201)
+
+@cards_bp.route("/<card_id>", methods= ["DELETE"], strict_slashes=False)
+def delete_card(card_id):
+    card = Card.query.get_or_404(card_id)
+    db.session.delete(card)
+    db.session.commit()
+
+    return make_response(f"Card with ID: {card.card_id} deleted", 200)
+
+@cards_bp.route("/<card_id>/likes", methods= ["PUT"], strict_slashes=False)
+def add_likes(card_id):
+    card = Card.query.get_or_404(card_id)
+    form_data = request.get_json()
+    likes_count = form_data["likes_count"]
+    
+    db.session.commit()
+
+    return make_response(f"Likes count has been updated to: {likes_count}", 200)
+
 

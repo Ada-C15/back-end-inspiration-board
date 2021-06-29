@@ -16,19 +16,13 @@ Creating a board
 # Get all boards
 @boards_bp.route("", methods=["GET"])
 def get_all_boards():
-    # boards = Board.query.all()
-    # how do I capture session?
-    # query = session.query(Board).order_by(Board.board_id)
     query = Board.query.order_by(Board.board_id.asc())
-
 
     boards_list = []
     for board in query:
         boards_list.append(board.get_resp())
-    # sorted_boards_list = sorted(boards_list, key = lambda board: board["board_id"])
 
     return jsonify(boards_list), 200
-    # return jsonify(boards_list), 200
 
 
 # Create a board

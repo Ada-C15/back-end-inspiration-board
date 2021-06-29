@@ -55,7 +55,7 @@ def delete_single_board(id):
     db.session.commit()
     return {
         "details": f"Board {board.board_id} \"{board.title}\" successfully deleted"
-    }
+    } ### Also not in the hints doc
 
 # DELETE /boards 
 @boards_bp.route("", methods=["DELETE"])
@@ -65,7 +65,7 @@ def delete_all_boards():
     db.session.commit()
     return {
         "details": "Boards successfully deleted"
-    }## might not work, might need for loop
+    }## might not work, might need for loop /// not in the hints doc
 
 # GET /boards/{id}/cards
 @boards_bp.route("/<id>/cards", methods=["GET"])
@@ -91,18 +91,33 @@ def create_new_card():
 
 # GET /cards/{id}
 @cards_bp.route("/cards/<id>", methods=["GET"])
-def get_single_card():
-    pass
+def get_single_card(id):
+    card = Card.query.get(id)
+    if card is None:
+        return make_response("", 404)
+
+    return {
+        "card": card.to_json()
+    } #### not in the hints doc 
+
 
 # PATCH /card/{id}/like
 @cards_bp.route("/cards/<id>/like", methods=["PATCH"]) #*** simon used a PUT for this
 def like_card():
     pass
 
+
 # DELETE /cards/{id}
 @cards_bp.route("/cards/<id>", methods=["DELETE"])
 def delete_card():
-    pass
+    card = Card.query.get(id)
+    if card is None:
+        return make_response("", 404)
+    db.session.delete(card)
+    db.session.commit()
+    return {
+        "details": f"Card {card.card_id} \"{card.title}\" successfully deleted"
+    }
 
 
 

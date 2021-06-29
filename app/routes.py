@@ -1,10 +1,9 @@
-from flask import Blueprint, request, jsonify, make_response, json
-from flask.signals import request_finished
+from flask import Blueprint, request, jsonify, make_response
+# from flask.signals import request_finished
 from app import db
 from app.models.board import Board
 from app.models.card import Card
 import os
-import re
 import requests
 
 
@@ -26,7 +25,7 @@ def get_boards():
 @board_bp.route("", methods=["POST"])
 def create_board():
     request_body = request.get_json()
-    if "title" or "owner" not in request_body:
+    if "title" not in request_body or "owner" not in request_body:
         return make_response({"details": "Invalid data"}, 400)
 
     new_board = Board(title=request_body["title"],
@@ -35,32 +34,43 @@ def create_board():
     db.session.add(new_board)
     db.session.commit()
 
-    return make_response({"id": new_board.board_id}, 200)
+    return make_response(new_board.board_json())
+
+    # return jsonify({new_board.board_id}, 200)
 
 # GET / boards / <board_id> / cards
-@board_bp.route("<board_id>/cards", methods=["GET"])
-def get_cards_for_board(board_id):
-    board = Board.query.get(board_id)
+# @board_bp.route("/<board_id>/cards", methods=["GET"])
+# def get_cards_for_board(board_id):
+#     board = Board.query.get(board_id)
 
-    if board is None:
-        return ("Board does not exist (1)", 404)
+#     if board is None:
+#         return ("Board does not exist (1)", 404)
 
-    cards = Card.query.filter_by(board=board_id)
-    card_list = []
-    for card in cards:
-        card_list.append(card.board_json())
+#     cards = Card.query.filter_by(board=board_id)
+#     card_list = []
+#     for card in cards:
+#         card_list.append(card.board_json())
 
-    return make_response({
-        "id": board.board_id,
-        "title": board.title,
-        "cards": card_list
-    }, 200)
+#     return make_response({
+#         "id": board.board_id,
+#         "title": board.title,
+#         "cards": card_list
+#     }, 200)
 
 # Priority for Today
 # POST / boards / <board_id> / cards
-# @board_bp.route("<board_id>/cards", methods=["POST"])
+# @board_bp.route("/<board_id>/cards", methods=["POST"])
 # def create_cards_for_board(board_id):
+#     request_body = request.get_json()
+#     if "message" not in request_body:
+#         return make_response({"details": "Invalid data"}, 400)
 
+#     new_card = Card(message=request_body["message"])
+
+#     db.session.add(new_card)
+#     db.session.commit()
+
+#     return make_response({"id": new_card.card_id}, 200)
 
 # DELETE / cards / <card_id> 
 #@card_bp.route("/<card_id>", methods=["DELETE"])

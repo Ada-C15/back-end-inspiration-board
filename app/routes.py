@@ -62,7 +62,8 @@ def delete_single_board(id):
 @boards_bp.route("", methods=["DELETE"])
 def delete_all_boards():
     boards = Board.query.all()
-    db.session.delete(boards)
+    for board in boards:
+        db.session.delete(board)
     db.session.commit()
     return {
         "details": "Boards successfully deleted"

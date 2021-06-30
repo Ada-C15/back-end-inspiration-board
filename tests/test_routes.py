@@ -44,7 +44,7 @@ def test_get_all_boards_one_saved_board(client, one_board):
 
     #Assert
     assert response.status_code == 200
-    assert response_body.length == 1
+    assert len(response_body) == 1
     assert response_body == [
         {
             "board_id": 1,
@@ -82,7 +82,7 @@ def test_create_board_missing_title(client):
     #Assert
     assert response.status_code == 400
     assert response_body == {
-        "details": "Invalid data"
+        "details": "invalid data"
     }
 
 def test_create_board_missing_owner(client):
@@ -95,8 +95,21 @@ def test_create_board_missing_owner(client):
     #Assert
     assert response.status_code == 400
     assert response_body == {
-        "details": "Invalid data"
+        "details": "invalid data"
     }
+
+def test_delete_boards(client, three_boards):
+    #Act
+    response = client.delete("/boards")
+    response_body = response.get_json()
+
+    #Assert
+    assert response.status_code == 200
+    assert "details" in response_body
+    assert response_body == {
+        "details": "Boards successfully deleted"
+    }
+    assert Board.query.all() == []
 
 
 ############################ TEST /BOARDS/{id} ENDPOINT ############################
@@ -126,3 +139,63 @@ def test_get_board_not_found(client):
     assert response.status_code == 404
     assert response_body == None
 
+def test_delete_board(client, three_boards):
+    #Act
+    response = client.delete("/boards/2")
+    response_body = response.get_json()
+
+    #Assert
+    assert response.status_code == 200
+    assert "details" in response_body
+    assert response_body == {
+        "details": 'Board 2 "Cool plants" successfully deleted'
+    }
+    assert len(Board.query.all()) == 2
+
+
+############################ TEST /BOARDS/{id}/CARDS ENDPOINT ############################
+
+def test_get_cards_for_specific_board():
+    pass
+
+def test_get_cards_for_nonexistant_board():
+    pass
+
+def test_post_new_card_to_board():
+    pass
+
+def test_post_new_card_to_board_missing_message():
+    pass
+
+
+################################## TEST /CARDS ENDPOINT #################################
+
+def test_get_all_cards_three_saved_cards():
+    pass
+
+def test_get_all_cards_no_saved_cards():
+    pass
+
+def test_get_all_cards_one_saved_card():
+    pass
+
+def test_get_specific_card():
+    pass
+
+def test_get_specific_card_that_doesnt_exist():
+    pass
+
+def test_like_card():
+    pass
+
+def test_like_card_that_doesnt_exist():
+    pass
+
+def test_like_card_five_times():
+    pass
+
+def test_delete_card():
+    pass
+
+def test_delete_card_that_doesnt_exist():
+    pass

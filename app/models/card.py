@@ -1,5 +1,7 @@
+from flask import current_app
 from app import db
 from sqlalchemy.orm import relationship, backref
+
 
 class Card(db.Model):
 
@@ -21,4 +23,3 @@ class Card(db.Model):
         return card_to_json
 
 # T O D O: we need to implement logic or have a function to increase 'likes_count': self.likes_count,
-

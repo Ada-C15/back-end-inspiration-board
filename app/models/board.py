@@ -9,3 +9,9 @@ class Board(db.Model):
     cards = db.relationship('Card', backref='board', lazy=True)
     
 
+    def board_to_json(self):
+        return {
+            "board_id": self.board_id,
+            "title": self.title,
+            "owner": self.owner
+            } 

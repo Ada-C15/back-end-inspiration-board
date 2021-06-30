@@ -45,9 +45,6 @@ def create_board():
 def get_cards_for_board(board_id):
     board = Board.query.get(board_id)
 
-    # if board is None:
-    #     return ("Board does not exist", 404)
-
     if board is None:
         return make_response("Board does not exist", 404)
 
@@ -68,6 +65,10 @@ def create_cards_for_board(board_id):
     db.session.commit()
 
     return make_response(new_card.card_json())
+
+# PATCH / boards / <board_id> / cards
+# Every time a new card is made, it sends a message to the team's public Slack channel
+@board_bp.route("/<board_id>/cards", methods=["PATCH"])
 
 
 # DELETE / cards / <card_id> 
@@ -95,4 +96,27 @@ def like_card(card_id):
     db.session.commit()
 
     return make_response(card.card_json())
+
+
+# Resources from task-list markcomplete/ mark incomplete 
+# Every time a new card is made, it sends a message to the team's public Slack channel
+
+# @tasks_bp.route("/<task_id>/mark_complete", methods= ["PATCH"])
+# def mark_complete(task_id):
+#     task = Task.query.get(task_id)
+
+#     if task == None:
+#         return make_response("", 404)
+
+#     API_KEY = os.environ.get("API_KEY")
+#     PATH = "https://slack.com/api/chat.postMessage"
+#     query_params = {
+#             "channel": "task-notifications",
+#             "text": f"Someone just completed the task {task.title}."
+#         }
+#     task.completed_at = datetime.utcnow()
+#     db.session.commit()
+#     requests.post(PATH, data=query_params, headers={"Authorization":API_KEY})
+#     return make_response({"task": task.make_json()}) 
+
 

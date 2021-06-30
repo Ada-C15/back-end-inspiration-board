@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, Response
 from app import db
 from .models.board import Board
 from .models.card import Card
@@ -8,14 +8,13 @@ boards_bp = Blueprint("board", __name__, url_prefix="/boards")
 # route working
 @boards_bp.route("", methods=["GET"], strict_slashes=False)
 def boards():
-    if request.method == "GET":
-        board_list = Board.query.all()
+    board_list = Board.query.all()
 
-        boards_response = []
+    boards_response = []
 
-        for board in board_list: 
-            boards_response.append(board.board_to_json())
-        return jsonify(boards_response)
+    for board in board_list: 
+        boards_response.append(board.board_to_json())
+    return jsonify(boards_response)
 
 # route working
 @boards_bp.route("", methods=["POST"], strict_slashes=False)
@@ -41,12 +40,12 @@ def post_board_card(board_id):
     board = Board.query.get(board_id) # get correct board using id passed into endpoint
 
     if board is None: # if board doesn't exist, return error
-        return "", 404
+        return Response(f"Board {board_id} does not exist", status=404)
 
     request_body = request.get_json() # deviated from Task List API logic here
     
     new_card = Card(message = request_body["message"],
-                    likes_count = request_body["likes_count"],
+                    likes_count = 0,
                     board_id = board_id) # creates id here, reduces code
                     # this is going to have to become logic
 
@@ -67,7 +66,7 @@ def get_board_cards(board_id):
     board = Board.query.get(board_id) # get correct board using id passed into endpoint
 
     if board is None: # if board doesn't exist, return error
-        return "", 404
+        return Response(f"Board {board_id} does not exist", status=404)
         
     associated_cards = Card.query.filter_by(board_id=board_id)
 
@@ -87,20 +86,31 @@ def get_board_cards(board_id):
 
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
 
+# route working 
 @cards_bp.route("/<card_id>", methods=["DELETE"], strict_slashes=False)
 def cards(card_id):
 
     card = Card.query.get(card_id)
 
     if card is None:
-        return "", 404
+        return Response(f"Card {card_id} does not exist", status=404)
 
     db.session.delete(card)
     db.session.commit()
 
     return jsonify({
-        "details": f'Card {card.card_id} "{card.title}" successfully deleted.'
-    }) 
+        "details": f'Card {card.card_id} successfully deleted.'}), 200  # can add message but might be too long to print 
 
+# route working
+@cards_bp.route("/<card_id>/like", methods=["PUT"], strict_slashes=False)
+def update_card_likes(card_id):
+    card = Card.query.get(card_id)
+    
+    if card == None:
+        return Response(f"Card {card_id} does not exist", status=404)
+    
+    else:
+        card.likes_count += 1
 
-
+        db.session.commit()
+        return jsonify({"likes_count": card.likes_count}), 200

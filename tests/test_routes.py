@@ -217,3 +217,12 @@ def test_get_boards_filter_by_owner():
 def test_get_boards_filter_by_owner_doesnt_exist():
     pass
 
+def test_delete_boards_by_owner():
+    pass
+
+def test_delete_boards_by_title():
+    pass
+
+def test_delete_boards_by_owner_doesnt_exist():
+    pass
+

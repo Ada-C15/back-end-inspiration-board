@@ -8,3 +8,4 @@ class Board(db.Model):
     owner = db.Column(db.String)
     cards = db.relationship('Card', backref='board', lazy=True)
     
+

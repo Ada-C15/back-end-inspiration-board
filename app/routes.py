@@ -87,7 +87,7 @@ def retrieve_all_cards(board_id):
             return jsonify(f'Message empty, please enter a valid message'), 400
 
         
-    # new_card= Card.from_dict(request_body)
+
         new_card = Card(message=request_body["message"],board_id=board_id)
    
         db.session.add(new_card)

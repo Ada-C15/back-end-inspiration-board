@@ -20,11 +20,11 @@ def get_boards():
 # POST /boards
 @boards_bp.route("", methods=["POST"], strict_slashes=False)
 def add_board():
-    board_post_request = request.get_json()
+    response = request.get_json()
     # validate!
 
-    new_board = Board(title=board_post_request["title"],
-                    owner=board_post_request["owner"])
+    new_board = Board(title=response["title"],
+                    owner=response["owner"])
 
     db.session.add(new_board)
     db.session.commit()
@@ -44,14 +44,14 @@ def get_cards(board_id):
 @boards_bp.route("<board_id>/cards", methods=["POST"], strict_slashes=False)
 def add_card(board_id):
     current_board = Board.query.get(board_id)
-    cards_request = request.get_json() # board_request!!!
+    response = request.get_json() # board_request!!!
     # check if board exists by referencing board by ID
     # if not SOMEHTING in cards_to_add:
     #     return 404
     # not valid yet!
 
-    new_card = Card(message=cards_request["message"],
-                likes_count=cards_request["likes_count"],
+    new_card = Card(message=response["message"],
+                likes_count=response["likes_count"],
                 board=board_id)
     db.session.add(new_card)
 

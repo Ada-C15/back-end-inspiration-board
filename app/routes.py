@@ -62,7 +62,8 @@ def delete_single_board(id):
 @boards_bp.route("", methods=["DELETE"])
 def delete_all_boards():
     boards = Board.query.all()
-    db.session.delete(boards)
+    for board in boards:
+        db.session.delete(board)
     db.session.commit()
     return {
         "details": "Boards successfully deleted"
@@ -169,3 +170,6 @@ def delete_card():
 ######### EXTRAS ##########
 # PUT /board/{id} < unnecessary, extra feature?
 # PUT /cards/{id} < unnecessary
+
+# GET /boards/<owner> (get boards by owner) or query param
+# DELETE /boards/<owner> (delete boards that have a specific owner) or query param

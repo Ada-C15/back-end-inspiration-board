@@ -15,5 +15,3 @@ class Card(db.Model):
             "likes_count": self.likes_count,
             "board_id": self.board_id
         }
-    # set default like count to 0 
-    # autoincrement = True? -> it should go up by 1, could do this in the routes? 

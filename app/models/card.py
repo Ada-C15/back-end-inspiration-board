@@ -9,7 +9,7 @@ class Card(db.Model):
     board_id = db.Column(db.Integer, db.ForeignKey('board.board_id'))
 
     @classmethod
-    def from_json(cls, card_dict):
+    def from_dict(cls, card_dict): 
         return Card (message = card_dict["message"],
             likes_count=0,
             board_id = card_dict["board_id"])

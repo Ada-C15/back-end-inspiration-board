@@ -8,8 +8,8 @@ class Board(db.Model):
 
 
     @classmethod
-    def from_json(cls, board_dict):
-        return Board (title = board_dict["title"],
+    def from_dict(cls, board_dict): 
+        return Board (title = board_dict["title"], 
                 owner = board_dict["owner"])
 
     def as_json(self):
@@ -17,5 +17,11 @@ class Board(db.Model):
             "board_id": self.board_id,
             "title": self.title,
             "owner": self.owner,
-            # "cards": self.cards,
+            "cards": [card.as_json() for card in self.cards],
+
         }
+
+
+
+
+

@@ -90,3 +90,19 @@ def delete_card(card_id):
     db.session.commit()
 
     return ({"details": f"Card {card_id} successfully deleted."}, 200)
+
+
+@cards_bp.route("/<card_id>/like", methods=["PUT"])
+def update_card_like(card_id):
+    """
+    Update likes (+1) for a card with specific id.
+    PUT /cards/<card_id>/like
+    """
+    card = Card.query.get_or_404(
+        card_id,
+        description={
+            "error": True,
+            "error_message": f"Card with id {card_id} does not exist."})
+    card.update_likes()
+    db.session.commit()
+    return ({"details": f"Card {card_id} likes successfully updated by +1."}, 200)

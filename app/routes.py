@@ -31,7 +31,7 @@ def create_board():
         response = {
             "id" : new_board.board_id
         }
-        return make_response(jsonify(response),201)
+        return make_response(response,201)
     
     elif ("title" not in request_body) or ("owner" not in request_body):
         response = {
@@ -60,7 +60,7 @@ def get_one_board(board_id):
 # Returns a json with board_id and all the cards linked to that board
 def create_card_ids_to_board(board_id):
     request_body = request.get_json()
-    board = Board.query.get_or_404(board_id)
+    board = Board.query.get_or_404(board_id, "Incorrect id")
     for search_card_id in request_body["card_ids"]:
         card = Card.query.get(search_card_id)
         card.board_id = board_id
@@ -69,7 +69,7 @@ def create_card_ids_to_board(board_id):
         "board_id" : board_id,
         "card_ids": request_body["card_ids"]
     }
-    return jsonify(response), 200
+    return make_response(response, 200)
 
 
 @boards_bp.route("/<board_id>/cards", methods=["GET"], strict_slashes=False)
@@ -84,7 +84,7 @@ def get_cards_for_one_board(board_id):
         "title": board.title,
         "cards": cards_response
     }
-    return jsonify(response), 200
+    return make_response(response, 200)
 
 
 

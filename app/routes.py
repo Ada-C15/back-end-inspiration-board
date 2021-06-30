@@ -8,7 +8,7 @@ import os
 
 # example_bp = Blueprint('example_bp', __name__)
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
-# cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
+cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
 
 #=====================================================#
 #                   BOARD ROUTES                      #
@@ -81,7 +81,35 @@ def add_new_board():
 #     return {"id": goal.goal_id,
 #             "task_ids": tasks}, 200
 
+@boards_bp.route("/<board_id>/cards", methods=["POST"])
+def add_new_card_to_a_board(board_id): 
+    """
+    Add a new Card to a specific Board
+    """
+    request_body = request.get_json()
 
+    try:
+        # catches none type 
+        request_body["message"]
+    except:
+        return jsonify({
+            "details": "Invalid data" 
+        }), 400
+
+    if len(request_body["message"]) > 40 or request_body["message"] == "": 
+        return jsonify({
+            "details": "Message must be between 1 to 40 characters long"
+        }), 400
+
+    new_card = Card(
+            message=request_body["message"],
+            board_id=board_id
+            )
+
+    db.session.add(new_card)
+    db.session.commit()
+
+    return make_response(new_card.to_json(), 201)
 
 # (read) GET all the cards for a selected board 
 

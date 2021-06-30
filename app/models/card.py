@@ -11,6 +11,7 @@ class Card(db.Model):
     def card_to_json(self):
         return {
             "card_id": self.card_id,
+            "board_id": self.board_id,
             "message": self.message,
             "likes_count": self.likes_count
             }  

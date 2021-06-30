@@ -5,7 +5,7 @@ from .models.card import Card
 
 boards_bp = Blueprint("board", __name__, url_prefix="/boards")
 
-#route working
+# route working
 @boards_bp.route("", methods=["GET"], strict_slashes=False)
 def boards():
     if request.method == "GET":
@@ -17,7 +17,7 @@ def boards():
             boards_response.append(board.board_to_json())
         return jsonify(boards_response)
 
-#route working
+# route working
 @boards_bp.route("", methods=["POST"], strict_slashes=False)
 def create_board():
     request_body = request.get_json()
@@ -33,9 +33,10 @@ def create_board():
         db.session.commit()
         return {"board": new_board.board_to_json()}, 201
 
+# route working
 @boards_bp.route("<board_id>/cards", methods=["POST"], strict_slashes=False) 
 # post card to one board
-def post_board_cards(board_id):
+def post_board_card(board_id):
 
     board = Board.query.get(board_id) # get correct board using id passed into endpoint
 
@@ -44,22 +45,25 @@ def post_board_cards(board_id):
 
     request_body = request.get_json() # deviated from Task List API logic here
     
-    new_card = Card(message=request_body["message"],
-                    likes_count=request_body["likes_count"]) # this is going to have to become logic
+    new_card = Card(message = request_body["message"],
+                    likes_count = request_body["likes_count"],
+                    board_id = board_id) # creates id here, reduces code
+                    # this is going to have to become logic
 
-    new_card.board_id = board_id # assign board id to new instance of/row in Card
-
+    #new_card.board_id = board_id # assign board id to new instance of/row in Card
+    db.session.add(new_card)
     db.session.commit()
+    return {"card": new_card.card_to_json()}, 201
 
-    return {
-        "board_id": board.board_id,
-        "card_id": new_card.card_id # we might be returning something else here
-    }
+    # return {
+    #     "board_id": board.board_id,
+    #     "card_id": new_card.card_id # we might be returning something else here
+    # }
 
+# route working 
 @boards_bp.route("<board_id>/cards", methods=["GET"], strict_slashes=False) # get all cards for specific board
 # get cards of one board
 def get_board_cards(board_id):
-
     board = Board.query.get(board_id) # get correct board using id passed into endpoint
 
     if board is None: # if board doesn't exist, return error
@@ -70,24 +74,18 @@ def get_board_cards(board_id):
     list_of_cards = []
 
     for card in associated_cards:
-        list_of_cards.append({
-            "card_id": card.card_id,
-            "board_id": card.board_id,
-            "message": card.message,
-            "likes_count": card.likes_count,
-    })
+        list_of_cards.append(card.card_to_json())
 
-    return {
-        "board_id": board.board_id, # board data was obtained on line 29
-        "board_title": board.title,
-        "cards": list_of_cards
-        }
+    return {"cards": list_of_cards}, 200
+
+    # return {
+    #     "board_id": board.board_id, # board data was obtained on line 29
+    #     "board_title": board.title,
+    #     "cards": list_of_cards
+    #     }
 
 
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
-
-
-
 
 @cards_bp.route("/<card_id>", methods=["DELETE"], strict_slashes=False)
 def cards(card_id):

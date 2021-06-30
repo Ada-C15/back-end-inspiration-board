@@ -63,6 +63,7 @@ def handle_a_board(board_id):
 
 
 ## Cards ## 
+
 @cards_bp.route("", methods=["POST","GET"])
 def handle_cards():
     if request.method == "POST":
@@ -131,3 +132,50 @@ def handle_a_card_like(card_id):
         db.session.commit()
         response = card.card_response()
         return jsonify(response["likes_count"]), 200
+
+
+## Board - Cards ##
+@boards_bp.route("/<board_id>/cards", methods=["GET", "POST"])
+def handle_board_cards(board_id):
+        board = Board.query.get(board_id)
+
+        if board is None:
+            return make_response("Invalid Board ID", 404)
+
+        elif request.method =="POST":
+            request_body = request.get_json()
+    
+            if 'message' in request_body: 
+                new_card = Card(message=request_body["message"],board_id = board_id)
+                db.session.add(new_card)
+                db.session.commit()
+
+                response = new_card.card_response()
+                return jsonify(response), 201
+
+            else:
+                return make_response ("Invalid data error: please include title and owner information",400)
+            
+
+            # # for card_id in request_body["card_id"]:
+            # #     cards = []
+            # #     cards.append(Card.query.get(card_id))
+
+            #     # for card in cards:
+            #         card.board_id = board_id
+            #         db.session.commit()
+
+            # response = {}
+            # response["id"] = int(board_id)
+            # response["card_ids"] = request_body["card_ids"]
+
+            # return jsonify(response), 200
+
+        elif request.method == "GET": 
+            board_card_response = []
+
+            for card in board.cards:
+                board_card_response.append(card.card_response())
+
+            response = board_card_response
+            return jsonify(response), 200

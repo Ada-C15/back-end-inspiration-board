@@ -4,7 +4,7 @@ class Card(db.Model):
     card_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     message = db.Column(db.String, nullable=False)
     likes_count = db.Column(db.Integer, nullable=False) # autoincrement=True?
-    board = db.Column(db.Integer, db.ForeignKey('board.board_id')) # nullable=False?
+    board = db.Column(db.Integer, db.ForeignKey('board.board_id') nullable=False) 
 
 
 # "When the API sends back a card, the HTTP response looks like:"

@@ -169,3 +169,6 @@ def delete_card():
 ######### EXTRAS ##########
 # PUT /board/{id} < unnecessary, extra feature?
 # PUT /cards/{id} < unnecessary
+
+# GET /boards/<owner> (get boards by owner) or query param
+# DELETE /boards/<owner> (delete boards that have a specific owner) or query param

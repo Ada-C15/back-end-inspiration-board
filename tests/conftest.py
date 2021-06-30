@@ -1,6 +1,8 @@
 import pytest
 from app import create_app
 from app import db
+from app.models.card import Card
+from app.models.board import Board
 
 
 @pytest.fixture

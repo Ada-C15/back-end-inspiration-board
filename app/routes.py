@@ -112,7 +112,11 @@ def like_card(card_id):
     card = Card.query.get(card_id)
     request_body = request.get_json()
 
+    if "likes_count" not in request_body:
+        return make_response({"details": "need likes_count"}, 400)
+
     card.likes_count = request_body["likes_count"]
+    # card.likes_count += 1
     db.session.commit()
 
     return make_response(card.card_json())

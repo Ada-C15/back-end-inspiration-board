@@ -22,3 +22,18 @@ def boards():
             })
             
         return jsonify(board_list)
+
+@boards_bp.route("", methods=["POST"], strict_slashes=False)
+def create_board():
+    request_body = request.get_json()
+    
+    if ("title" not in request_body or "owner" not in request_body):
+        return jsonify({"details":"Invalid data"}),400
+    
+    else:
+        new_board = Board(title = request_body["title"],
+                        owner = request_body["owner"])
+
+        db.session.add(new_board)
+        db.session.commit()
+        return {"board": new_board.board_to_json()}, 201

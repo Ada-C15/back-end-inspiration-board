@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response
+from werkzeug.wrappers import response
 from app import db
 import requests
 from flask import jsonify
@@ -54,10 +55,44 @@ def get_one_board(board_id):
     return make_response(board.to_json(), 200)
 
 
+@boards_bp.route("/<board_id>/cards", methods=["POST"], strict_slashes=False)
+# Body should be a json like: { "card_ids": [1, 2]}
+# Returns a json with board_id and all the cards linked to that board
+def create_card_ids_to_board(board_id):
+    request_body = request.get_json()
+    board = Board.query.get_or_404(board_id)
+    for search_card_id in request_body["card_ids"]:
+        card = Card.query.get(search_card_id)
+        card.board_id = board_id
+    db.session.commit()
+    response = {
+        "board_id" : board_id,
+        "card_ids": request_body["card_ids"]
+    }
+    return jsonify(response), 200
+
+
+@boards_bp.route("/<board_id>/cards", methods=["GET"], strict_slashes=False)
+def get_cards_for_one_board(board_id):
+    board = Board.query.get_or_404(board_id, "Incorrect id")
+    cards = board.cards
+    cards_response = []
+    for card in cards:
+        cards_response.append(card.card_json())
+    response = {
+        "id": board.board_id,
+        "title": board.title,
+        "cards": cards_response
+    }
+    return jsonify(response), 200
+
+
+
+
 # ***************************** CARD ROUTES ***********************
 
-@boards_bp.route("/<board_id>/cards", methods=["POST"], strict_slashes=False)
-def post_card(board_id):
+@cards_bp.route("", methods=["POST"], strict_slashes=False)
+def post_card():
     request_body = request.get_json()
     new_card = Card(message= request_body["message"])
     
@@ -72,6 +107,7 @@ def post_card(board_id):
         }
         return make_response(response, 201)
 
+
 @cards_bp.route("/<card_id>", methods= ["DELETE"], strict_slashes=False)
 def delete_card(card_id):
     card = Card.query.get_or_404(card_id)
@@ -79,6 +115,7 @@ def delete_card(card_id):
     db.session.commit()
 
     return make_response(f"Card with ID: {card.card_id} deleted", 200)
+
 
 @cards_bp.route("/<card_id>/likes", methods= ["PUT"], strict_slashes=False)
 def add_likes(card_id):

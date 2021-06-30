@@ -6,9 +6,8 @@ from flask import request, Blueprint, jsonify
 # Q: do we need the codes?
 # Q: jsonify and make_response
 # get_or_404
-# strict 
 
-cards_bp = Blueprint("cards", __name__, url_prefix="/boards/<board_id>/cards")
+cards_bp = Blueprint("cards", __name__, url_prefix="/boards/board_id/cards")
 
 def get_card_response(card):
     """Returns card's data"""
@@ -18,7 +17,7 @@ def get_error_response(card_id):
     """Returns error message"""
     return jsonify({"details": f"Card with id {card_id} is not found"})
 
-@cards_bp.route("", methods = ["POST"])
+@cards_bp.route("", methods = ["POST"], strict_slashes=False)
 def add_card():
     """Adds a card to a board"""
     request_body = request.get_json() 
@@ -31,7 +30,7 @@ def add_card():
     db.session.commit()
     return get_card_response(card)
 
-@cards_bp.route("/<card_id>", methods=["DELETE"])
+@cards_bp.route("/<card_id>", methods=["DELETE"], strict_slashes=False)
 def delete_card(card_id):
     """Deletes a card"""
     card = Card.query.get(card_id)
@@ -41,7 +40,7 @@ def delete_card(card_id):
     db.session.commit()
     return ({"details": f"Card {card_id} \"{card.message}\" successfully deleted"})
 
-@cards_bp.route("/<card_id>", methods=["PATCH"]) # used patch instead of put
+@cards_bp.route("/<card_id>", methods=["PATCH"], strict_slashes=False) 
 def update_card(card_id):
     """Updates a portion of a single card"""
     card = Card.query.get(card_id)
@@ -49,7 +48,7 @@ def update_card(card_id):
         return get_error_response(card_id)
     request_body = request.get_json()
     # Updates message
-    if request_body["message"]: #update
+    if request_body["message"]: #TODO update
         card.message = request_body["message"]
     # Updates likes count
     else:
@@ -61,11 +60,11 @@ def update_card(card_id):
 
 
 
-
+"""
 board = Board.query.get_or_404(board_id)
 cards = Card.query.filter_by(board_id=board.board_id)
 card = cards.query.get_or_404(card_id)
-
+"""
 
 
 

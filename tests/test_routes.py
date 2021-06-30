@@ -161,6 +161,9 @@ def test_get_cards_for_specific_board():
 def test_get_cards_for_nonexistant_board():
     pass
 
+def test_get_cards_for_empty_board():
+    pass
+
 def test_post_new_card_to_board():
     pass
 
@@ -224,5 +227,8 @@ def test_delete_boards_by_title():
     pass
 
 def test_delete_boards_by_owner_doesnt_exist():
+    pass
+
+def test_get_cards_for_specified_board_sort_by_most_liked():
     pass
 

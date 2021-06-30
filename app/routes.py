@@ -123,23 +123,35 @@ def delete_all_boards():
     db.session.commit()
     return {
         "details": "Boards successfully deleted"
-    }## might not work, might need for loop /// not in the hints doc
+    }
 
-# GET /boards/{id}/cards
+
 @boards_bp.route("/<id>/cards", methods=["GET"])
 def get_cards_for_specific_board(id):
+    """
+    Request body: None. Optional query parameter to sort by like count, ascending or descending.
+    Action: Gets all cards associated with the baord id provided in route path.
+    Response: 200 OK. 404 if board not found. Returns JSON list of dictionaries representing resulting cards.
+    """
+    sort_by_likes_query = request.args.get("sort_by_likes")
+
     board = Board.query.get(id)
     if board is None:
         return make_response("", 404)
 
-    associated_cards = Card.query.filter_by(board_id=int(id))
+    if sort_by_likes_query == "asc":
+        associated_cards = Card.query.filter_by(board_id=int(id)).order_by("likes_count")
+    elif sort_by_likes_query == "desc":
+        associated_cards = Card.query.filter_by(board_id=int(id)).order_by(desc("likes_count"))
+    else:
+        associated_cards = Card.query.filter_by(board_id=int(id))
 
     response = board.to_json()
     response['cards'] = [card.to_json() for card in associated_cards]
 
     return response
 
-# POST /boards/id/cards
+
 @boards_bp.route("/<id>/cards", methods=["POST"])
 def create_new_card(id):
     """

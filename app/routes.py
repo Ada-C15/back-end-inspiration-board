@@ -186,9 +186,15 @@ def create_new_card(id):
 
 
 ############################################## CARDS CRUD ##########################################################
+#GET /cards/ all
+@cards_bp.route("", methods=["GET"])
+def get_all_cards():
+    cards = Card.query.all()
+    return jsonify([card.to_json() for card in cards])
+
 
 # GET /cards/{id}
-@cards_bp.route("/cards/<id>", methods=["GET"])
+@cards_bp.route("/<id>", methods=["GET"])
 def get_single_card(id):
     card = Card.query.get(id)
     if card is None:
@@ -200,7 +206,7 @@ def get_single_card(id):
 
 
 # PATCH /card/{id}/like
-@cards_bp.route("/cards/<id>/like", methods=["PATCH"]) #*** simon used a PUT for this
+@cards_bp.route("/<id>/like", methods=["PATCH"]) #*** simon used a PUT for this
 def like_card(id):
     """
     Request body: none
@@ -222,15 +228,15 @@ def like_card(id):
 
 
 # DELETE /cards/{id}
-@cards_bp.route("/cards/<id>", methods=["DELETE"])
-def delete_card():
+@cards_bp.route("/<id>", methods=["DELETE"])
+def delete_card(id):
     card = Card.query.get(id)
     if card is None:
         return make_response("", 404)
     db.session.delete(card)
     db.session.commit()
     return {
-        "details": f"Card {card.card_id} \"{card.title}\" successfully deleted"
+        "details": f"Card {card.card_id} \"{card.message}\" successfully deleted"
     }
 
 

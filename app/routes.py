@@ -36,4 +36,4 @@ def create_board():
 
         db.session.add(new_board)
         db.session.commit()
-        return {"board": new_board.board_to_json()}, 201
+        return (jsonify(new_board), 201)

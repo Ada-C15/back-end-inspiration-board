@@ -1,3 +1,4 @@
+
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models.card import Card
@@ -61,5 +62,6 @@ def add_card(board_id):
 
     # return jsonify(available_board.cards_list()), 201
     return "SUCCESSS", 201
+
 
 

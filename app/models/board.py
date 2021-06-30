@@ -1,5 +1,7 @@
+from flask import current_app
 from app import db
 from sqlalchemy.orm import relationship, backref
+
 
 class Board(db.Model):
 
@@ -24,4 +26,3 @@ class Board(db.Model):
         for card in self.cards:
             all_cards.append(card.card_to_json()) 
         return all_cards
-

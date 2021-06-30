@@ -199,3 +199,21 @@ def test_delete_card():
 
 def test_delete_card_that_doesnt_exist():
     pass
+
+################################# TEST QUERY PARAMETERS #################################
+
+def test_get_boards_sort_by_title():
+    pass
+
+def test_get_boards_sort_by_owner():
+    pass
+
+def test_get_boards_filter_by_title():
+    pass
+
+def test_get_boards_filter_by_owner():
+    pass
+
+def test_get_boards_filter_by_owner_doesnt_exist():
+    pass
+

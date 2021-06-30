@@ -54,35 +54,8 @@ def add_new_board():
 
 
 # (create) POST a new card for a selected board by id 
-
-# def create_goal():
-#     request_body = request.get_json()
-#     if "title" in request_body:
-#         new_goal = Goal(
-#             title=request_body["title"])
-#         db.session.add(new_goal)
-#         db.session.commit()
-#         return jsonify({"goal": new_goal.to_dict()}), 201
-
-#     new_goal = make_response({"details": "Invalid data"}, 400)
-
-# @boards_bp.route("/<board_id>/cards", methods=["POST"], strict_slashes=False)
-# def add_cards_to_goal(board_id):
-
-#     request_body = request.get_json()
-#     tasks = request_body["task_ids"]
-#     # (db)
-#     goal = Goal.query.get(goal_id)
-#     for task_id in tasks:
-#         task_db_object = Task.query.get(task_id)
-#         goal.tasks.append(task_db_object)
-#         # task_db_object.goal_id = int(goal_id)
-#         db.session.commit()
-#     return {"id": goal.goal_id,
-#             "task_ids": tasks}, 200
-
-@boards_bp.route("/<board_id>/cards", methods=["POST"])
-def add_new_card_to_a_board(board_id): 
+@boards_bp.route("/<int:board_id>/cards", methods=["POST"])
+def add_new_card_to_board(board_id): 
     """
     Add a new Card to a specific Board
     """
@@ -111,9 +84,9 @@ def add_new_card_to_a_board(board_id):
 
     return make_response(new_card.to_json(), 201)
 
-# (read) GET all the cards for a selected board 
 
-@boards_bp.route("/<board_id>/cards", methods=["GET"], strict_slashes=False)
+# (read) GET all the cards for a selected board 
+@boards_bp.route("/<int:board_id>/cards", methods=["GET"], strict_slashes=False)
 def get_cards_of_one_board(board_id):
     board = Board.query.get_or_404(board_id)
     board_response = board.to_json()
@@ -122,11 +95,21 @@ def get_cards_of_one_board(board_id):
 
 
 
-
 #=====================================================#
 #                    CARD ROUTES                      #
 #=====================================================#
 
 # DELETE a card by id 
+
+@cards_bp.route("/<int:card_id>", methods=["DELETE"], strict_slashes=False)
+def delete_card(card_id):
+    card = Card.query.get_or_404(card_id)
+    db.session.delete(card)
+    db.session.commit()
+    card_response = {
+        "details": f'Card {card.card_id} successfully deleted'
+        }
+    return make_response(card_response), 200 
+
 
 # +1 likes feature, part of card model 

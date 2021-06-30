@@ -9,7 +9,8 @@ class Card(db.Model):
     board_id = db.Column(db.Integer, db.ForeignKey('board.board_id'), nullable=True)
 
     def to_json(self): 
-        return {     
+        return {  
+            "card_id": self.card_id,   
             "message": self.message,
             "likes_count": self.likes_count,
             "board_id": self.board_id

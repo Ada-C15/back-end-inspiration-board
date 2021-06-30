@@ -10,5 +10,5 @@ class Board(db.Model):
         return {
             "id": self.board_id,
             "title": self.title,
-            "owner": self.owner
+            "owner": self.owner,
         }

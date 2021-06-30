@@ -60,41 +60,42 @@ def retrieve_one_board(board_id):
 
 
 
-@board_bp.route("/<board_id>/cards", methods=["GET"])
+@board_bp.route("/<board_id>/cards", methods=["GET", "POST"])
 def retrieve_all_cards(board_id):
     cards = Card.query.filter_by(board_id=board_id).all()
 
-    if cards is None:
-        return make_response("",200)
-    else:
-        response = [card.as_json() for card in cards]
-        return make_response(jsonify(response), 200)
+    if request.method == "GET":
+
+        if cards is None:
+            return make_response("",200)
+        else:
+            response = [card.as_json() for card in cards]
+            return make_response(jsonify(response), 200)
 
 
+    elif request.method == "POST": 
 
-@card_bp.route("", methods=["POST"])
-def create_a_card(): 
-    request_body = request.get_json()
+        board = Board.query.filter_by(board_id = board_id).first()
+        request_body = request.get_json()
+        for card_attribute in ["message"]:
+            if card_attribute not in request_body:
+                return jsonify(f'Missing required: {card_attribute}'),400
+        if len(request_body["message"]) > 40:
+            return jsonify(f'Message too long'),400
+
+        if request_body["message"] == "":
+            return jsonify(f'Message empty, please enter a valid message'), 400
+
         
 
-    for card_attribute in ["message","board_id"]:
-        if card_attribute not in request_body:
-            return jsonify(f'Missing required: {card_attribute}'),400
-    if len(request_body["message"]) > 40:
-        return jsonify(f'Message too long'),400
-
-
-    if request_body["message"] == "":
-        return jsonify(f'Message empty, please enter a valid message'), 400
-
-        
-    new_card= Card.from_dict(request_body)
+        new_card = Card(message=request_body["message"],board_id=board_id)
    
-    db.session.add(new_card)
-    db.session.commit()
+        db.session.add(new_card)
+        db.session.commit()
 
-    response = new_card.as_json()
-    return make_response(jsonify(response), 201)
+        response = new_card.as_json()
+        return make_response(jsonify(response), 201)
+
 
 
 

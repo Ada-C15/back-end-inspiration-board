@@ -13,7 +13,31 @@ cards_bp = Blueprint('cards', __name__, url_prefix="/cards")
 # GET /boards
 @boards_bp.route("", methods=["GET"])
 def get_all_boards():
-    boards = Board.query.all()
+    """
+    Request body: None. Accommodates query parameters in route path to sort by title or owner, or filter results by title or owner.
+    Action: Gets all boards within query parameters, otherwise gets all boards in database.
+    Response: A JSON list of dictionaries, each dictionary representing a board. These dictionaries contain keys "id", "title", and "owner"
+    """
+    sort_by_title_query = request.args.get("sort_by_title")
+    sort_by_owner_query = request.args.get("sort_by_owner")
+    filter_by_title_query = request.args.get("filter_by_title")
+    filter_by_owner_query = request.args.get("filter_by_owner")
+
+    if sort_by_title_query == "asc":
+        boards = Board.query.order_by("title")
+    elif sort_by_title_query == "desc":
+        boards = Board.query.order_by(desc("title"))
+    elif sort_by_owner_query == "asc":
+        boards = Board.query.order_by("owner")
+    elif sort_by_owner_query == "desc":
+        boards = Board.query.order_by(desc("owner"))
+    elif filter_by_title_query:
+        boards = Board.query.filter_by(title=filter_by_title_query)
+    elif filter_by_owner_query:
+        boards = Board.query.filter_by(owner=filter_by_owner_query)
+    else:
+        boards = Board.query.all()
+
     return jsonify([board.to_json() for board in boards])
 
 # POST /boards

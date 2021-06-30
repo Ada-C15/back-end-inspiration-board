@@ -10,15 +10,44 @@ cards_bp = Blueprint('cards', __name__, url_prefix="/cards")
 
 ############################################## BOARDS CRUD ##########################################################
 
-# GET /boards
+
 @boards_bp.route("", methods=["GET"])
 def get_all_boards():
-    boards = Board.query.all()
+    """
+    Request body: None. Accommodates query parameters in route path to sort by title or owner, or filter results by title or owner.
+    Action: Gets all boards within query parameters, otherwise gets all boards in database.
+    Response: A JSON list of dictionaries, each dictionary representing a board. These dictionaries contain keys "id", "title", and "owner"
+    """
+    sort_by_title_query = request.args.get("sort_by_title")
+    sort_by_owner_query = request.args.get("sort_by_owner")
+    filter_by_title_query = request.args.get("filter_by_title")
+    filter_by_owner_query = request.args.get("filter_by_owner")
+
+    if sort_by_title_query == "asc":
+        boards = Board.query.order_by("title")
+    elif sort_by_title_query == "desc":
+        boards = Board.query.order_by(desc("title"))
+    elif sort_by_owner_query == "asc":
+        boards = Board.query.order_by("owner")
+    elif sort_by_owner_query == "desc":
+        boards = Board.query.order_by(desc("owner"))
+    elif filter_by_title_query:
+        boards = Board.query.filter_by(title=filter_by_title_query)
+    elif filter_by_owner_query:
+        boards = Board.query.filter_by(owner=filter_by_owner_query)
+    else:
+        boards = Board.query.all()
+
     return jsonify([board.to_json() for board in boards])
 
-# POST /boards
+
 @boards_bp.route("", methods=["POST"])
 def create_new_board():
+    """
+    Request body: A JSON dictionary with "title" and "owner"
+    Action: Creates a new board with specified title and owner. If either of these details is missing from request body, throws a 400 error.
+    Response: 201 Created. Returns a JSON dictionary with key "board", whose value is another dictionary detailing new board's info ("board_id", "title", "owner")
+    """
     request_body = request.get_json()
     try:
         new_board = Board(title=request_body['title'],
@@ -34,9 +63,14 @@ def create_new_board():
     }
     return make_response(jsonify(response), 201)
 
-# GET /boards/{id}
+
 @boards_bp.route("/<id>", methods=["GET"])
 def get_single_board(id):
+    """
+    Request body: None; requested board id specified in route path.
+    Action: Gets baord with specified ID; returns 404 response if no board found.
+    Response: 200 OK, returns JSON dictionary with key "board" whose value is another dictionary detailing the board's info ("board_id", "title", "owner")
+    """
     board = Board.query.get(id)
     if board is None:
         return make_response("", 404)
@@ -46,9 +80,14 @@ def get_single_board(id):
     }
     
 
-# DELETE /boards/id
+
 @boards_bp.route("/<id>", methods=["DELETE"])
 def delete_single_board(id):
+    """
+    Request body: None. Requested board id is specified in route path.
+    Action: Deletes board at specified ID if board exists.
+    Response: 404 if not found; otherwise, 200 OK. Returns dictionary with message that the selected board was deleted.
+    """
     board = Board.query.get(id)
     if board is None:
         return make_response("", 404)
@@ -58,32 +97,61 @@ def delete_single_board(id):
         "details": f"Board {board.board_id} \"{board.title}\" successfully deleted"
     } ### Also not in the hints doc
 
-# DELETE /boards 
+
 @boards_bp.route("", methods=["DELETE"])
 def delete_all_boards():
-    boards = Board.query.all()
+    """
+    Request body: None. Query parameters optionally provided in route path to delete boards by title or owner.
+    Action: Deletes all boards if no query parameters. Query parameters accommodates deleting all boards that match specific title or owner.
+    Response: 404 if empty database or invalid owner/title query param. Otherwise, 200 ok. Returns message confirming board deletion.
+    """
+    filter_by_title_query = request.args.get("filter_by_title")
+    filter_by_owner_query = request.args.get("filter_by_owner")
+
+    if filter_by_title_query:
+        boards = Board.query.filter_by(title=filter_by_title_query)
+    elif filter_by_owner_query:
+        boards = Board.query.filter_by(owner=filter_by_owner_query)
+    else:
+        boards = Board.query.all()
+
+    if len(boards) == 0:
+        return make_response("", 404)
+
     for board in boards:
         db.session.delete(board)
     db.session.commit()
     return {
         "details": "Boards successfully deleted"
-    }## might not work, might need for loop /// not in the hints doc
+    }
 
-# GET /boards/{id}/cards
+
 @boards_bp.route("/<id>/cards", methods=["GET"])
 def get_cards_for_specific_board(id):
+    """
+    Request body: None. Optional query parameter to sort by like count, ascending or descending.
+    Action: Gets all cards associated with the baord id provided in route path.
+    Response: 200 OK. 404 if board not found. Returns JSON list of dictionaries representing resulting cards.
+    """
+    sort_by_likes_query = request.args.get("sort_by_likes")
+
     board = Board.query.get(id)
     if board is None:
         return make_response("", 404)
 
-    associated_cards = Card.query.filter_by(board_id=int(id))
+    if sort_by_likes_query == "asc":
+        associated_cards = Card.query.filter_by(board_id=int(id)).order_by("likes_count")
+    elif sort_by_likes_query == "desc":
+        associated_cards = Card.query.filter_by(board_id=int(id)).order_by(desc("likes_count"))
+    else:
+        associated_cards = Card.query.filter_by(board_id=int(id))
 
     response = board.to_json()
     response['cards'] = [card.to_json() for card in associated_cards]
 
     return response
 
-# POST /boards/id/cards
+
 @boards_bp.route("/<id>/cards", methods=["POST"])
 def create_new_card(id):
     """

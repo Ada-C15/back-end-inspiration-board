@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.board import Board
 from app.models.card import Card
+from app import slack_key
 import os
 import requests
 
@@ -63,13 +64,33 @@ def create_cards_for_board(board_id):
 
     db.session.add(new_card)
     db.session.commit()
+    created_card_id = new_card.card_id
+    slack_notification(created_card_id)
 
     return make_response(new_card.card_json())
 
 # PATCH / boards / <board_id> / cards
 # Every time a new card is made, it sends a message to the team's public Slack channel
 @board_bp.route("/<board_id>/cards", methods=["PATCH"])
+def slack_notification(created_card_id):
+    card = Card.query.get(created_card_id)
+    board = Board.query.get(card.board_id)
 
+    url = "https://slack.com/api/chat.postMessage"
+    data = {
+        "channel": "team-6-inspo",
+        "text": (f"🥳✨ Someone just created a new card with message '{card.message}' on board '{board.title}' ✨ 🙌") 
+    }
+    headers = {
+        "Authorization": f"Bearer {slack_key}"
+    }
+
+    requests.post(url, data=data, headers=headers)
+
+    return make_response("Card created", 201)
+
+
+    # return make_response({"card": card.card_json()})
 
 # DELETE / cards / <card_id> 
 @card_bp.route("/<card_id>", methods=["DELETE"])

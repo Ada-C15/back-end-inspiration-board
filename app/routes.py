@@ -92,7 +92,7 @@ def delete_card(card_id):
     return ({"details": f"Card {card_id} successfully deleted."}, 200)
 
 
-@cards_bp.route("/<card_id>/like", methods=["PUT"])
+@cards_bp.route("/<card_id>/like", methods=["PATCH"])
 def update_card_like(card_id):
     """
     Update likes (+1) for a card with specific id.

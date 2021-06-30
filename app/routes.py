@@ -96,9 +96,13 @@ def post_card():
     request_body = request.get_json()
     new_card = Card(message= request_body["message"])
     
-    if new_card.message == "" \
-        or type(new_card.message) is not str:
-        return 404
+    if type(new_card.message) != str:
+        return make_response(f"Your message must contain only letters.",404)
+    elif new_card.message == "":
+        return make_response(f"Please enter a message.", 404)
+    elif len(new_card.message) > 40:
+        return make_response(f"Message must be less than 40 characters.", 404)
+
     else:
         db.session.add(new_card)
         db.session.commit()

@@ -14,6 +14,7 @@ board_bp = Blueprint("boards", __name__, url_prefix="/boards")
 # Request: board id;
 # Response:  {“board_id”, “title”, “owner”}
 @board_bp.route("", methods=["GET"])
+@cross_origin()
 def board():
     boards = Board.query.all()
     board_response = []
@@ -30,6 +31,7 @@ def board():
 # Response:  update db && success code ?  
 
 @board_bp.route("", methods=["POST"])
+@cross_origin()
 def create_board():
     request_body = request.get_json()
 
@@ -55,6 +57,7 @@ def create_board():
 # Request: board_id
 # Response:  update db && success code ?
 @board_bp.route("/<int:board_id>/cards", methods=["POST"])
+@cross_origin()
 def post_card_to_board(board_id):
     board = Board.query.get(board_id)
     if not board:
@@ -73,6 +76,7 @@ def post_card_to_board(board_id):
     }), 200
     
 @board_bp.route("/<int:board_id>/cards", methods=["GET"])
+@cross_origin()
 def get_card_from_board(board_id):
     board = Board.query.get(board_id)
     if not board:
@@ -89,6 +93,7 @@ def get_card_from_board(board_id):
 # Response:  successfully delete message ?
 
 @card_bp.route("/<int:id>", methods=["DELETE"])
+@cross_origin()
 def delete_card(id):
     card = Card.query.get(id)
     if card:
@@ -106,6 +111,7 @@ def delete_card(id):
 # Request: card_id
 # Response:  update db && success code ? 
 @card_bp.route("/<int:id>/like", methods=["PATCH"])
+@cross_origin()
 def update_like(id):
     card = Card.query.get(id)
     if not card:

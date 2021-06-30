@@ -25,12 +25,19 @@ def get_all_boards():
 @boards_bp.route("", methods=["POST"])
 def create_board():
     request_body = request.get_json()
+
+    if not ("title" in request_body and "owner" in request_body):
+        return make_response({
+            "error": True,
+            "message": f"Invalid request body."}, 400)
+
     new_board = Board(
         title=request_body["title"],
         owner=request_body["owner"]
     )
     db.session.add(new_board)
     db.session.commit()
+    # What does front end need as return?
     return (jsonify(f"Posted new board {new_board.title}!"), 201)
 
 
@@ -51,22 +58,42 @@ def get_all_card():
 # Get all cards associated with board
 
 
-@cards_bp.route("/<board_id>", methods=["GET"])
-def get_card(board_id):
-    board = Board.query.get(board_id)
-    cards_list = []
-    for card in board.cards:
-        board_card = Card.query.get(card.card_id)
+@boards_bp.route("/<board_id>/cards", methods=["GET"])
+def get_cards(board_id):
+    board = Board.query.get_or_404(
+        board_id,
+        description={
+            "error": True,
+            "message": "Board does not exist."})
 
-        cards_list.append(board_card.get_resp())
+    cards = Card.query.filter_by(board_id=board_id)
+
+    cards_list = []
+    for card in cards:
+        cards_list.append(card.get_resp())
+
     return (jsonify(cards_list), 201)
 
 # Create a card for a board
 
 
-@cards_bp.route("/<board_id>", methods=["POST"])
+# @cards_bp.route("/<board_id>", methods=["POST"])
+@boards_bp.route("/<board_id>/cards", methods=["POST"])
 def create_card(board_id):
+
+    board = Board.query.get_or_404(
+        board_id,
+        description={
+            "error": True,
+            "message": "Board does not exist."})
+
     request_body = request.get_json()
+
+    if not ("message" in request_body):
+        return make_response({
+            "error": True,
+            "message": f"Invalid request body."}, 400)
+
     new_card = Card(
         message=request_body["message"],
         board_id=board_id
@@ -84,7 +111,7 @@ def delete_card(card_id):
         card_id,
         description={
             "error": True,
-            "error_message": f"Card with id {card_id} does not exist."})
+            "error": f"Card with id {card_id} does not exist."})
 
     db.session.delete(card)
     db.session.commit()
@@ -102,7 +129,7 @@ def update_card_like(card_id):
         card_id,
         description={
             "error": True,
-            "error_message": f"Card with id {card_id} does not exist."})
+            "message": f"Card with id {card_id} does not exist."})
     card.update_likes()
     db.session.commit()
     return ({"details": f"Card {card_id} likes successfully updated by +1."}, 200)

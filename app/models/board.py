@@ -7,7 +7,6 @@ class Board(db.Model):
     title = db.Column(db.String)
     owner = db.Column(db.String)
     cards = db.relationship('Card', backref='board', lazy=True)
-    
 
     def board_to_json(self):
         return {

@@ -37,14 +37,14 @@ def create_board():
         create_board = Board(title=request_body["title"],
                             owner=request_body["owner"])
     except KeyError:
-        return make_response({
-            "details": "Invalid data"
-        }, 400)
+        return jsonify({
+            "error_message": "Invalid data"
+        }), 400
     db.session.add(create_board)
     db.session.commit()
-    return {
+    return jsonify({
         "board": create_board.to_json()
-    }, 201
+    }), 201
 
 ###################### Part C & D: "GET", "POST" /boards/<board_id>/cards endpoint ##################
 # c. GET /boards/<board_id>/cards
@@ -54,43 +54,34 @@ def create_board():
 # d. POST /boards/<board_id>/cards
 # Request: board_id
 # Response:  update db && success code ?
-
-@board_bp.route("/<int:id>/cards", methods=["GET", "POST"])
-def board_cards(id):
-    board = Board.query.get(id)
+@board_bp.route("/<int:board_id>/cards", methods=["POST"])
+def post_card_to_board(board_id):
+    board = Board.query.get(board_id)
+    if not board:
+        return jsonify({
+            "error_message": 'Board doesn\'t exist'
+        }), 404
+    request_body = request.get_json()
+    card = Card (
+        message=request_body["message"],
+        board_id = board_id
+    )
+    db.session.add(card)
+    db.session.commit()
+    return jsonify({
+        "card": card.to_json()
+    }), 200
+    
+@board_bp.route("/<int:board_id>/cards", methods=["GET"])
+def get_card_from_board(board_id):
+    board = Board.query.get(board_id)
     if not board:
         return make_response('Board doesn\'t exist', 404)
+    board_dict = board.to_json()
+    board_dict["cards"] = [card.to_json() for card in board.cards]
 
-    if request.method == 'POST':
-        card_ids = request.get_json()['card_ids']
-        for card_id in card_ids:
-            card = Card.query.get(card_id)
-            if card not in board.cards:
-                board.cards.append(card)
-        response_body = {
-            'id': board.id,
-            'card_ids': [card.card_id for card in board.cards]
-        }
-        db.session.commit()
-        return jsonify(response_body), 200
-
-    cards = []
-    for card in board.cards:
-        card_json = {
-            'id': card.card_id,
-            'message': card.message,
-            'like_count': card.like_count,
-            'is_complete': bool(card.completed_at)
-        }
-        card.append(card_json)
-
-    response_body = {
-        'id': board.id,
-        'title': board.title,
-        'owner': board.owner
-    }
-
-    return jsonify(response_body), 200
+    # return make_response(jsonify(board_dict), 200)
+    return jsonify(board_dict), 200
 
 ###################### Part E: DELETE  /cards/<card_id> endpoint ##################
 # e. DELETE /cards/<card_id>
@@ -100,11 +91,13 @@ def board_cards(id):
 @card_bp.route("/<int:id>", methods=["DELETE"])
 def delete_card(id):
     card = Card.query.get(id)
-    if card == None:
-        return make_response(f"Card {id} not found", 404)
-    db.session.delete(card)
-    db.session.commit()
-    return make_response({"details": f"Card {id} \"{card.title}\" successfully deleted"}, 200)
+    if card:
+        db.session.delete(card)
+        db.session.commit()
+        return jsonify({"details": f"Card {id} successfully deleted"
+            }), 200
+    return jsonify({"error_message": f"Card {id} not found"
+        }), 404
 
 
 
@@ -112,13 +105,12 @@ def delete_card(id):
 # f. PUT /cards/<card_id>/like
 # Request: card_id
 # Response:  update db && success code ? 
-
-@card_bp.route("/<int:id>/like", methods=["PUT"])
-def update_card(id):
+@card_bp.route("/<int:id>/like", methods=["PATCH"])
+def update_like(id):
     card = Card.query.get(id)
     if not card:
-        return make_response('Goal not found.', 404)
-    request_body = request.get_json()
-    card.title = request_body['title']
+        return jsonify({"error_message": "card not found."
+                }), 404
+    card.like_count += 1
     db.session.commit()
     return jsonify({'card': card.to_json()}), 200

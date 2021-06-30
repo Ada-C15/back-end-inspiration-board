@@ -1,52 +1,27 @@
-# from flask import current_app ? no longer sure about why we needed this here
 from app import db
+from sqlalchemy.orm import relationship, backref
 
 class Board(db.Model):
+
+    __tablename__ = "boards"
     board_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, nullable=False)
     owner = db.Column(db.String, nullable=False)
-    cards = db.relationship('Card', backref='card', lazy=True)
+    cards = db.relationship('Card', backref='cards', lazy=True)
 
 
-# "Every time the API sends back data about a board, the HTTP response includes these key-value pairs": 
-# {
-#     "board_id": ...,
-#     "title": ...,
-#     "owner": ...
-# }
-# Then...
-# the method below is to return one board in json format:
-
-def board_to_json_format(self):
-    return {
-            'board_id': self.board_id,
-            'title': self.title,
-            'owner': self.owner,
-            }
+    def board_to_json(self):
+        return {
+                'board_id': self.board_id,
+                'title': self.title,
+                'owner': self.owner,
+                }
 
 
-# "Lists of cards are in an array:"
-# [
-#     {
-#         "card_id": ...,
-#         "message": ...,
-#         "likes_count": ...,
-#         "board_id": ...
-#     },
-#     {
-#         "card_id": ...,
-#         "message": ...,
-#         "likes_count": ...,
-#         "board_id": ...
-#     }
-# ]
-# Then...
-# the method below is to return an array in json format:
-
-def cards_list_in_board_to_json_format(self):
-    # return [c.card_to_json_format() for c in self.cards]
-    cards_list = []
-    for card in self.cards:
-        cards_list.append(card.card_to_json_format()) 
-    return cards_list
+    def cards_list_to_json(self):
+        # return [c.card_to_json_format() for c in self.cards]
+        all_cards = []
+        for card in self.cards:
+            all_cards.append(card.card_to_json()) 
+        return all_cards
 

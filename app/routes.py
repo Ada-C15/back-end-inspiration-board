@@ -14,16 +14,13 @@ card_bp = Blueprint("cards", __name__, url_prefix="/cards")
 @board_bp.route("", methods=["POST"])
 
 def create_a_board(): 
-    request_body = request.form
-
-
+    request_body = request.get_json()
 
     for board_attribute in ["title","owner"]:
         if board_attribute not in request_body:
             return jsonify(f'Missing required: {board_attribute}'),400
 
 
-     
     new_board = Board.from_dict(request_body)
   
 
@@ -77,7 +74,7 @@ def retrieve_all_cards(board_id):
 
 @card_bp.route("", methods=["POST"])
 def create_a_card(): 
-    request_body = request.form
+    request_body = request.get_json()
         
 
     for card_attribute in ["message","board_id"]:

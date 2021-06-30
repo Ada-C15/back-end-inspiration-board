@@ -31,6 +31,24 @@ def get_boards():
     return make_response(jsonify(boards_response), 200)
 
 
+@board_bp.route("/<board_id>", methods=["DELETE"], strict_slashes=False)
+def remove_board(board_id):
+    # delete all cards tied to board_id
+    cards = Card.query.filter_by(board_id=board_id)
+    if cards:
+        for card in cards:
+            db.session.delete(card)
+    
+    board = Board.query.get(board_id)
+    if board:
+        db.session.delete(board)
+        db.session.commit()
+        return jsonify({
+            "details": (f'Board {board.board_id} successfully deleted from Inspiration Board')
+        }), 200
+    return "", 404
+
+
 @board_bp.route("/<board_id>/cards", methods=["POST"], strict_slashes=False)
 def add_card_to_board(board_id):
     request_body=request.get_json()

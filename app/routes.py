@@ -90,3 +90,4 @@ def updating_card_likes_count(card_id):
         "details": f"Updated {card.card_id}'s likes count to {card.likes_count}"
         }
     return make_response(likes_response), 200
+

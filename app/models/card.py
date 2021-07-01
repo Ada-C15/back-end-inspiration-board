@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship, backref
 class Card(db.Model):
 
     __tablename__ = "cards"
-    card_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    card_id = db.Column(db.Integer, primary_key=True) #, autoincrement=True)
     message = db.Column(db.String) # , nullable=False)
     likes_count = db.Column(db.Integer) # , nullable=False)
     board = db.Column(db.Integer, db.ForeignKey('boards.board_id')) # , nullable=False) 

@@ -31,5 +31,5 @@ def create_app():
     app.register_blueprint(boards_bp)
     app.register_blueprint(cards_bp)
 
-    CORS(app, resources={r"/*": {"origins": ["*", "localhost:3000"]} });
+    CORS(app)
     return app

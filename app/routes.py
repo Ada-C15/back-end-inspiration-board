@@ -103,10 +103,7 @@ def retrieve_all_cards(board_id):
         }, headers = {
             "Authorization": access_token,
         })
-        print(response.text)
-    
-
-
+       
 
         response = new_card.as_json()
         return make_response(jsonify(response), 201)

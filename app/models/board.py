@@ -6,8 +6,9 @@ class Board(db.Model):
     board_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String)
     owner = db.Column(db.String)
+    #parent
+        # 'Card' looks at class in python and loads multiple of those (this is like a pseudo column)
     cards = db.relationship('Card', backref='board', lazy=True)
-
 
     def to_json(self): 
         return {     

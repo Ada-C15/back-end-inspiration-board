@@ -79,7 +79,7 @@ def increase_likes(board_id, card_id):
     
     current_card = Card.query.get(card_id)
 
-    if current_board.board_id == current_card.board:
+    if current_board.board_id == current_card.board_id:
         current_card.likes_count += 1
     
     db.session.add(current_card)

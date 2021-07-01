@@ -133,16 +133,18 @@ def get_cards_for_specific_board(id):
     Action: Gets all cards associated with the baord id provided in route path.
     Response: 200 OK. 404 if board not found. Returns JSON list of dictionaries representing resulting cards.
     """
-    sort_by_likes_query = request.args.get("sort_by_likes")
+    sort_query = request.args.get("sort")
 
     board = Board.query.get(id)
     if board is None:
         return make_response("", 404)
 
-    if sort_by_likes_query == "asc":
-        associated_cards = Card.query.filter_by(board_id=int(id)).order_by("likes_count")
-    elif sort_by_likes_query == "desc":
+    if sort_query == "likes":
         associated_cards = Card.query.filter_by(board_id=int(id)).order_by(desc("likes_count"))
+    elif sort__query == "id":
+        associated_cards = Card.query.filter_by(board_id=int(id)).order_by("id")
+    elif sort_query == "alphabetical":
+        associated_cards = Card.query.filter_by(board_id=int(id)).order_by("message")
     else:
         associated_cards = Card.query.filter_by(board_id=int(id))
 

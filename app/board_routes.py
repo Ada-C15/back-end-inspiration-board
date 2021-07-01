@@ -28,7 +28,7 @@ def get_one_board(board_id):
 
 # POST /boards
 @boards_bp.route("", methods=["POST"], strict_slashes=False)
-@cross_origin
+#@cross_origin
 def add_board():
     response = request.get_json()
     # validate!

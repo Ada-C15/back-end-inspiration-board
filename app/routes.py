@@ -45,8 +45,22 @@ def call_slack_api(new_card):
     # try:
     result = client.chat_postMessage(
         channel=channel_id,
-        text=f"New card #{new_card.card_id} posted! Check if someone talked smack about you! 💀 XOXO💋")
+        text=f"New card #{new_card.card_id} posted! {new_card.message}")
+        # text=f"New card #{new_card.card_id} posted! Check if someone talked smack about you! 💀 XOXO💋")
     return result
+
+# AFFIRMATIONS = [
+#         "Your worth is not your productivity",
+#         "I see how much effort you've been putting in!",
+#         "Future you will thank you",
+#         "Remember, you deserve to take breaks",
+        
+#     ]
+#     affirmation_quote = AFFIRMATIONS[random.randint(0,len(AFFIRMATIONS)-1)]
+#     text = (f"New card #{new_card.card_id} posted!\n"
+#             f"❣️ {affirmation_quote}")
+
+
 
 @boards_bp.route("/<int:board_id>/cards", methods=["POST"])
 def add_new_card_to_board(board_id): 
@@ -91,6 +105,7 @@ def delete_card(card_id):
         "details": f'Card {card.card_id} successfully deleted'
         }
     return make_response(card_response), 200 
+    
 
 @cards_bp.route("/<int:card_id>/like", methods=["PUT"], strict_slashes=False)
 def updating_card_likes_count(card_id):

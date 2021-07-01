@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.board import Board
 from app.models.card import Card
+import requests
+import os
 
 # example_bp = Blueprint('example_bp', __name__)
 
@@ -92,6 +94,16 @@ def retrieve_all_cards(board_id):
    
         db.session.add(new_card)
         db.session.commit()
+
+        access_token = os.environ.get("SLACK_BOT_TOKEN")
+        path = "https://slack.com/api/chat.postMessage"
+        response = requests.post(path, data = {
+            "channel": "inspiration-bot",
+            "text": f"Someone just created a card {new_card.card_id}",
+        }, headers = {
+            "Authorization": access_token,
+        })
+       
 
         response = new_card.as_json()
         return make_response(jsonify(response), 201)

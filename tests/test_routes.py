@@ -306,6 +306,44 @@ def test_delete_card_that_doesnt_exist(client):
     assert response.status_code == 404
     assert response_body == None
 
+def test_create_card(client, one_board):
+    #Act
+    response = client.post("/boards/1/cards", json={
+        "message": "New Card!",
+    })
+    response_body = response.get_json()
+
+    #Assert
+    assert response.status_code == 201
+    assert "card" in response_body
+    assert {'card': {'board_id': 1, 'card_id': 1, 'likes_count': 0, 'message': 'New Card!'}} == response_body
+
+def test_create_card_no_message_returns_error(client, one_board):
+    #Act
+    response = client.post("/boards/1/cards", json={})
+    response_body = response.get_json()
+
+    #Assert
+    assert response.status_code == 400
+    assert "details" in response_body
+    assert response_body == {
+        "details": "invalid data"
+    }
+
+def test_create_card_over_characters_returns_error(client, one_board):
+    #Act
+    response = client.post("/boards/1/cards", json={
+        "message": "New Card! with entirely too long a message, hoping it will break all the things",
+    })
+    response_body = response.get_json()
+
+    #Assert
+    assert response.status_code == 400
+    assert "details" in response_body
+    assert response_body == {
+        "details": "message exceeds 40 characters"
+    }
+    
 ################################# TEST QUERY PARAMETERS #################################
 
 def test_get_boards_sort_by_title():

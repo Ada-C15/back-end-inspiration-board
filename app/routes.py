@@ -146,10 +146,7 @@ def get_cards_for_specific_board(id):
     else:
         associated_cards = Card.query.filter_by(board_id=int(id))
 
-    response = board.to_json()
-    response['cards'] = [card.to_json() for card in associated_cards]
-
-    return response
+    return jsonify([card.to_json() for card in associated_cards])
 
 
 @boards_bp.route("/<id>/cards", methods=["POST"])
@@ -175,7 +172,7 @@ def create_new_card(id):
         }, 400)
 
     db.session.add(new_card)
-    db.session.commit(new_card)
+    db.session.commit()
 
     response = {
         "card": new_card.to_json()

@@ -28,6 +28,7 @@ cards_bp = Blueprint("cards", __name__, url_prefix="/boards")
 def get_cards(board_id):
     current_board = Board.query.get(board_id) #!!???
     # needs validachon
+    #so close we got this I'm sorry i just noticed this, I will come back to it later if I have time or if you want me to -laurel 
     return jsonify(current_board.cards_list_to_json()), 200
 
 

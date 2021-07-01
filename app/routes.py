@@ -2,8 +2,10 @@ from flask import Blueprint, request, jsonify, make_response
 from app.models.board import Board
 from app.models.card import Card
 from app import db
-import requests
+# import requests
 import os
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
 
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
@@ -37,6 +39,15 @@ def add_new_board():
     db.session.commit()
     return make_response(new_board.to_json(), 201)
 
+def call_slack_api(new_card):
+    client = WebClient(token=os.environ.get("SLACK_BOT_TOKEN"))
+    channel_id = "inspiration-board-group-11"
+    # try:
+    result = client.chat_postMessage(
+        channel=channel_id,
+        text=f"New card #{new_card.card_id} posted! Check if someone talked smack about you! 💀 XOXO💋")
+    return result
+
 @boards_bp.route("/<int:board_id>/cards", methods=["POST"])
 def add_new_card_to_board(board_id): 
     request_body = request.get_json()
@@ -56,6 +67,7 @@ def add_new_card_to_board(board_id):
             )
     db.session.add(new_card)
     db.session.commit()
+    call_slack_api(new_card)
     return make_response(new_card.to_json(), 201)
 
 @boards_bp.route("/<int:board_id>/cards", methods=["GET"], strict_slashes=False)
@@ -83,8 +95,9 @@ def delete_card(card_id):
 @cards_bp.route("/<int:card_id>/like", methods=["PUT"], strict_slashes=False)
 def updating_card_likes_count(card_id):
     card = Card.query.get_or_404(card_id)
-    request_body = request.get_json()
-    card.likes_count=request_body["likes_count"]
+    # request_body = request.get_json()
+    card.likes_count+=1
+    # card.likes_count=request_body["likes_count"]
     db.session.commit()
     likes_response = {
         "details": f"Updated {card.card_id}'s likes count to {card.likes_count}"

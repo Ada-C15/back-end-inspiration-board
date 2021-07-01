@@ -15,14 +15,15 @@ card_bp = Blueprint("cards", __name__, url_prefix="/cards")
 
 # GET / boards - (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 @board_bp.route("", methods=["GET"])
+@cross_origin(supports_credentials=True)
 def get_boards():
     boards = Board.query.all()
     boards_response = []
     for board in boards:
         boards_response.append(board.board_json())
 
-    boards_response.headers.add("Access-Control-Allow-Origin", "*")
-    return make_response(boards_response)
+    # boards_response.headers.add("Access-Control-Allow-Origin", "*")
+    return jsonify(boards_response)
 
 # POST / boards - (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 @board_bp.route("", methods=["POST"])
@@ -46,13 +47,14 @@ def create_board():
 # (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 # GET / boards / <board_id> / cards 
 @board_bp.route("/<board_id>/cards", methods=["GET"])
+@cross_origin(supports_credentials=True)
 def get_cards_for_board(board_id):
     board = Board.query.get(board_id)
 
     if board is None:
         return make_response("Board does not exist", 404)
 
-    board.headers.add("Access-Control-Allow-Origin", "*")
+    # board.headers.add("Access-Control-Allow-Origin", "*")
     return make_response(board.return_board_cards())
 
 # POST / boards / <board_id> / cards 

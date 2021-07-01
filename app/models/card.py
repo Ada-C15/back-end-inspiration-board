@@ -9,7 +9,7 @@ class Card(db.Model):
     card_id = db.Column(db.Integer, primary_key=True) #, autoincrement=True)
     message = db.Column(db.String) # , nullable=False)
     likes_count = db.Column(db.Integer, default=0) # , nullable=False)
-    board = db.Column(db.Integer, db.ForeignKey('boards.board_id')) # , nullable=False) 
+    board_id = db.Column(db.Integer, db.ForeignKey('boards.board_id')) # , nullable=False) 
     # had to remove nullable constraints
 
 

@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from app import db
 from app.models.card import Card
 from app.models.board import Board
+from flask_cors import cross_origin
 
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
 
@@ -27,6 +28,7 @@ def get_one_board(board_id):
 
 # POST /boards
 @boards_bp.route("", methods=["POST"], strict_slashes=False)
+@cross_origin
 def add_board():
     response = request.get_json()
     # validate!

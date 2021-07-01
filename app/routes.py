@@ -6,6 +6,7 @@ from app.models.card import Card
 from app import slack_key
 import os
 import requests
+from flask_cors import CORS, cross_origin
 
 
 # example_bp = Blueprint('example_bp', __name__)
@@ -14,16 +15,18 @@ card_bp = Blueprint("cards", __name__, url_prefix="/cards")
 
 # GET / boards - (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 @board_bp.route("", methods=["GET"])
+@cross_origin()
 def get_boards():
     boards = Board.query.all()
     boards_response = []
     for board in boards:
         boards_response.append(board.board_json())
 
-    return jsonify(boards_response)
+    return make_response(boards_response)
 
 # POST / boards - (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 @board_bp.route("", methods=["POST"])
+@cross_origin()
 def create_board():
     request_body = request.get_json()
 
@@ -37,12 +40,13 @@ def create_board():
 
     db.session.add(new_board)
     db.session.commit()
-
+    
     return make_response(new_board.board_json())
 
 # (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 # GET / boards / <board_id> / cards 
 @board_bp.route("/<board_id>/cards", methods=["GET"])
+@cross_origin()
 def get_cards_for_board(board_id):
     board = Board.query.get(board_id)
 
@@ -54,6 +58,7 @@ def get_cards_for_board(board_id):
 # POST / boards / <board_id> / cards 
 # (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
 @board_bp.route("/<board_id>/cards", methods=["POST"])
+@cross_origin()
 def create_cards_for_board(board_id):
     request_body = request.get_json()
 
@@ -72,6 +77,7 @@ def create_cards_for_board(board_id):
 # PATCH / boards / <board_id> / cards
 # Every time a new card is made, it sends a message to the team's public Slack channel
 @board_bp.route("/<board_id>/cards", methods=["PATCH"])
+@cross_origin()
 def slack_notification(created_card_id):
     card = Card.query.get(created_card_id)
     board = Board.query.get(card.board_id)
@@ -94,6 +100,7 @@ def slack_notification(created_card_id):
 
 # DELETE / cards / <card_id> 
 @card_bp.route("/<card_id>", methods=["DELETE"])
+@cross_origin()
 def delete_card(card_id):
     card = Card.query.get(card_id)
 
@@ -108,6 +115,7 @@ def delete_card(card_id):
 
 # PUT / cards / <card_id> / like
 @card_bp.route("/<card_id>/like", methods=["PUT"])
+@cross_origin()
 def like_card(card_id):
     card = Card.query.get(card_id)
     request_body = request.get_json()

@@ -164,6 +164,11 @@ def create_new_card(id):
     request_body = request.get_json()
 
     try:
+        note = request_body['message']
+        if len(note) > 40:
+            return make_response ({
+                "details": "message exceeds 40 characters"
+            }, 400)
         new_card = Card(message=request_body['message'],
                             board_id=id)
     except KeyError:

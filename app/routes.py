@@ -22,6 +22,7 @@ def get_boards():
     for board in boards:
         boards_response.append(board.board_json())
 
+    boards_response.headers.add("Access-Control-Allow-Origin", "*")
     return make_response(boards_response)
 
 # POST / boards - (FULLY FUNCTIONING, DON'T TOUCH THIS! LOVE YOU, BUT DON'T TRUST YOU!)
@@ -53,6 +54,7 @@ def get_cards_for_board(board_id):
     if board is None:
         return make_response("Board does not exist", 404)
 
+    board.headers.add("Access-Control-Allow-Origin", "*")
     return make_response(board.return_board_cards())
 
 # POST / boards / <board_id> / cards 

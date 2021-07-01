@@ -87,16 +87,17 @@ def delete_card(board_id, card_id):
 
 @boards_bp.route("<board_id>/cards/<card_id>/likes", methods=["PUT"], strict_slashes=False)
 def increase_likes(board_id, card_id): 
-    response = request.get_json() 
-    # current_board = Board.query.get(board_id)
+
+    # response = request.get_json() 
+    
+    current_board = Board.query.get(board_id)
     
     current_card = Card.query.get(card_id)
 
-
-
-    if board_id == current_card.board:
+    if current_board.board_id == current_card.board:
         current_card.likes_count += 1
-        db.session.commit()
+    
+    db.session.add(current_card)
     db.session.commit()
 
     return jsonify(current_card.card_to_json()), 200

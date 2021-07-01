@@ -6,7 +6,7 @@ from app.models.card import Card
 from app import slack_key
 import os
 import requests
-from flask_cors import CORS,oss_origin
+from flask_cors import CORS, cross_origin
 
 
 # example_bp = Blueprint('example_bp', __name__)

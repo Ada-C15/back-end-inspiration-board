@@ -2,6 +2,11 @@ from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.board import Board
 from app.models.card import Card
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 # from flask_cors import cross_origin
 
 card_bp = Blueprint("cards", __name__, url_prefix="/cards")
@@ -60,6 +65,7 @@ def post_card_to_board(board_id):
     )
     db.session.add(card)
     db.session.commit()
+    send_slack_notifications(board_id)
     return jsonify({
         "card": card.to_json()
     }), 200
@@ -107,3 +113,16 @@ def update_like(id):
     card.like_count += 1
     db.session.commit()
     return jsonify({'card': card.to_json()}), 200
+
+###################### Sending Slack messages ##################
+def send_slack_notifications(board_id):
+    access_token = os.environ.get("AUTH_TOKEN")
+    path = "https://slack.com/api/chat.postMessage"
+    query_headers = {
+          "Authorization": f"Bearer {access_token}"
+    }
+    query_params = {
+          "channel": "devdiva",
+          "text": f"Someone just posted a new card on board {board_id}"
+    }
+    response = requests.post(path, headers=query_headers, params=query_params)

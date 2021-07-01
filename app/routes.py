@@ -132,4 +132,6 @@ def update_card_like(card_id):
             "message": f"Card with id {card_id} does not exist."})
     card.update_likes()
     db.session.commit()
-    return ({"details": f"Card {card_id} likes successfully updated by +1."}, 200)
+    return make_response(card.get_resp(), 200)
+    # return ({"details": f"Card {card_id} likes successfully updated by
+    # +1."}, 200)

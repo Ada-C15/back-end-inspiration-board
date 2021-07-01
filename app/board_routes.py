@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 from app import db
 from app.models.card import Card
 from app.models.board import Board
-import flask_cors import cross_origin
+from flask_cors import cross_origin
 
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
 

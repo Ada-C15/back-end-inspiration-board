@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.board import Board
 from app.models.card import Card
+from sqlalchemy import desc
 
 
 boards_bp = Blueprint('boards', __name__, url_prefix="/boards")
@@ -142,7 +143,7 @@ def get_cards_for_specific_board(id):
     if sort_query == "likes":
         associated_cards = Card.query.filter_by(board_id=int(id)).order_by(desc("likes_count"))
     elif sort_query == "id":
-        associated_cards = Card.query.filter_by(board_id=int(id)).order_by("id")
+        associated_cards = Card.query.filter_by(board_id=int(id)).order_by("card_id")
     elif sort_query == "alphabetical":
         associated_cards = Card.query.filter_by(board_id=int(id)).order_by("message")
     else:

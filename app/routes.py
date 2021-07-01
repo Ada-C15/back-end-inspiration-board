@@ -30,7 +30,6 @@ def get_boards():
     boards_response = [board.to_dict() for board in boards]
     return make_response(jsonify(boards_response), 200)
 
-
 @board_bp.route("/<board_id>", methods=["DELETE"], strict_slashes=False)
 def remove_board(board_id):
     # delete all cards tied to board_id
@@ -55,6 +54,7 @@ def add_card_to_board(board_id):
     
     if "message" in request_body:
         new_card = Card(message= request_body["message"],
+                            color= request_body["color"],
                             likes_count= 0,
                             board_id= int(board_id))
         db.session.add(new_card)

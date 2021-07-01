@@ -15,7 +15,7 @@ def get_boards():
     boards_list = []
     for board in all_boards:
         boards_list.append(board.board_to_json())
-    return jsonify({"boards_list": boards_list}), 200
+    return jsonify(boards_list), 200
 
 
 # POST /boards
@@ -45,11 +45,7 @@ def get_cards(board_id):
 @boards_bp.route("<board_id>/cards", methods=["POST"], strict_slashes=False)
 def add_card(board_id):
     current_board = Board.query.get(board_id)
-    response = request.get_json() # board_request!!!
-    # check if board exists by referencing board by ID
-    # if not SOMEHTING in cards_to_add:
-    #     return 404
-    # not valid yet!
+    response = request.get_json() 
 
     new_card = Card(message=response["message"],
                 likes_count=response["likes_count"],
@@ -60,8 +56,24 @@ def add_card(board_id):
     db.session.add(current_board)
     db.session.commit()
 
-    # return jsonify(available_board.cards_list()), 201
-    return "SUCCESSS", 201
+    return jsonify(current_board.cards_list_to_json()), 201
 
 
+@boards_bp.route("<board_id>/cards/<card_id>", methods=["DELETE"], strict_slashes=False)
+def delete_card(board_id, card_id):
+    card_to_delete = Card.query.get(card_id)
+    db.session.delete(card_to_delete)
+    db.session.commit()
+    return "deleted!", 200
 
+@boards_bp.route("<board_id>/cards/<card_id>/likes", methods=["PUT"], strict_slashes=False)
+def increase_likes(board_id) 
+    response = request.get_json() 
+    current_board = Board.query.get(board_id)
+    card_id = response["card_id"]
+    card_in_this_board = current_board.cards[card_id] 
+    if card_in_this_board:
+        card_in_this_board.likes_count += 1
+        db.session.commit()
+    db.session.commit()
+    return "successssss", 200

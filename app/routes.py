@@ -48,9 +48,9 @@ def call_slack_api(new_card):
         f"So Fetch! New card #{new_card.card_id} posted: '{new_card.message}'.", 
         f"So Grool! New card #{new_card.card_id} posted: '{new_card.message}'.", 
         f"You go Glenn Coco! New card #{new_card.card_id} posted: '{new_card.message}'.", 
-        f"The limit does not exist, but on here it's 40 characters https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id} posted!", 
-        f"Your face smells like peppermint (and other compliments) https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id} posted!", 
-        f"Get in loser. We're going compliment shopping https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id} posted!"
+        f"The limit does not exist, but on here it's 40 characters: https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id}!", 
+        f"Your face smells like peppermint (and other compliments): https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id}!", 
+        f"Get in loser. We're going compliment shopping: https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id}!"
     ]
     affirmation_quote = AFFIRMATIONS[random.randint(0,len(AFFIRMATIONS)-1)]
     result = client.chat_postMessage(
@@ -69,7 +69,7 @@ def add_new_card_to_board(board_id):
         return jsonify({
             "details": "Invalid data" 
         }), 400
-    if len(request_body["message"]) > 40 or request_body["message"] == "": 
+    if len(request_body["message"]) > 60 or request_body["message"] == "": 
         return jsonify({
             "details": "Message must be between 1 to 40 characters long"
         }), 400

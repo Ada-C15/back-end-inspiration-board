@@ -21,10 +21,3 @@ class Card(db.Model):
             'board_id': self.board_id,
         }
         return card_to_json
-
-# T O D O: we need to implement logic or have a function to increase 'likes_count': self.likes_count,
-#we may want to do a continuos post request for updating likes on front end; will have to think about 
-#managing the asynchronous side on the front end with useEffect & axious - axios.whatever().then().catch()
-
-
-# axios.post(/cards/5/like) means "increment by 1 like"

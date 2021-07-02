@@ -140,11 +140,11 @@ def delete_card(card_id):
 def add_likes(card_id):
     card = Card.query.get_or_404(card_id)
     form_data = request.get_json()
-    likes_count = form_data["likes_count"] + 1
+    card.likes_count = form_data["likes_count"] + 1
     
     db.session.commit()
     response = {
-        "likes": likes_count
+        "likes": card.likes_count
     }
     return make_response(response, 200)
 

@@ -46,7 +46,7 @@ def add_card(board_id):
                 # I added a default value of 0 to the card model on line 11
                 # I commented out line 64 and the post request works with just the "message" in the post request 
                 # likes_count=likes_count,
-                board=board_id)
+                board_id=board_id)
     
     db.session.add(new_card)
 

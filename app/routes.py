@@ -78,7 +78,7 @@ def add_new_card_to_board(board_id):
             )
     db.session.add(new_card)
     db.session.commit()
-    call_slack_api(new_card)
+    # call_slack_api(new_card)
     return make_response(new_card.to_json(), 201)
 
 @boards_bp.route("/<int:board_id>/cards", methods=["GET"], strict_slashes=False)

@@ -88,6 +88,17 @@ def get_cards_of_one_board(board_id):
     board_response = board.to_json()
     board_response["cards"] = [card.to_json() for card in board.cards]
     return jsonify(board_response), 200
+    
+
+@boards_bp.route("<int:board_id>", methods=["DELETE"], strict_slashes=False)
+def delete_one_board(board_id):
+    board = Board.query.get_or_404(board_id)
+    db.session.delete(board)
+    db.session.commit()
+    board_response = {
+        "details": f'Board {board.board_id} successfully deleted'
+        }
+    return make_response(board_response), 200 
 
 
 #=====================================================#

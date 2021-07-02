@@ -3,11 +3,9 @@ from app import db
 from .models.card import Card
 from .models.board import Board
 from sqlalchemy import desc, asc
-
 import requests
 from app import slack_token 
 
-# example_bp = Blueprint('example_bp', __name__)
 card_bp = Blueprint("/board/<board_id>/cards", __name__, url_prefix="/board/<board_id>/cards")
 
 @card_bp.route("", methods=["POST"], strict_slashes=False)
@@ -23,7 +21,6 @@ def create_a_card(board_id):
     connect = requests.post(url, data=data, headers=headers)
     
     board = Board.query.get(board_id)
-    #print(f"##### {board_id} #####")
     
     if not board or board == None:
         return jsonify(""), 404 
@@ -38,9 +35,7 @@ def create_a_card(board_id):
     
     new_card  = Card.from_json(request_body)
     new_card.board_id = board_id
-    
-    #print(f"create_a_card card.boardId: {new_card.board_id}")
-    
+        
     db.session.add(new_card)
     db.session.add(board)
     db.session.commit()
@@ -53,22 +48,7 @@ def get_all_cards(board_id):
     # get sort query param
     sort_by_like_count_order = request.args.get("sort");
     
-    # board = Board.query.get(board_id)
-    
-    #print(f"get_all_cards(): Board = {board}")
-    
-    #if not board or board == None:
-    #    return jsonify(""), 404 
-    
     cards_list = []
-    
-    # board_cards = board.cards
-    
-    #print(f"get_all_cards(): board.cards = {board_cards}")
-    
-    # for card in board.cards:
-    #     card_data = Card.query.get(card.card_id)
-    #     cards_list.append(card_data.to_json())
     
     if sort_by_like_count_order is not None:
         if (sort_by_like_count_order == "asc"):

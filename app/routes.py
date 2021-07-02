@@ -41,7 +41,7 @@ def add_new_board():
 
 def call_slack_api(new_card):
     client = WebClient(token=os.environ.get("SLACK_BOT_TOKEN"))
-    channel_id = "inspiration-board-group-11"
+    channel_id = "buggy-puggy"
     # try:
     AFFIRMATIONS = [
         f"So Fetch! New card #{new_card.card_id} posted: '{new_card.message}'", 

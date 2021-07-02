@@ -39,7 +39,8 @@ def add_card(board_id):
     if error:
         return build_response(error)
     request_body = request.get_json() 
-    message = request_body["message"]
+    # message = request_body["message"]
+    message = request_body.message
     if not is_message_valid(message):
         return invalid_message_len_response()
     card = Card(message = message, board_id=board_id)

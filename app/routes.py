@@ -115,6 +115,21 @@ def delete_card(card_id):
             }
 
 
+# DELETE / boards / <board_id> 
+@board_bp.route("/<board_id>", methods=["DELETE"])
+@cross_origin(supports_credentials=True)
+def delete_card(board_id):
+    board = Board.query.get(board_id)
+
+    db.session.delete(board)
+    db.session.commit()
+
+    return {
+            "details":\
+            (f"Board {board_id} successfully deleted")
+            }
+
+
 # PUT / cards / <card_id> / like
 @card_bp.route("/<card_id>/like", methods=["PUT"])
 @cross_origin(supports_credentials=True)

@@ -25,7 +25,7 @@ def handle_boards():
             return jsonify(response), 201
 
         else:
-            return make_response ("Invalid data error: please include title and owner information",400)
+            return make_response ({"details":"Invalid data error: please include title and owner information"},400)
 
     elif request.method == "GET":
         boards = Board.query.all()
@@ -80,7 +80,7 @@ def handle_cards():
             return jsonify(response), 201
 
         else:
-            return make_response ("Invalid data error: please include title and owner information",400)
+            return make_response ({"details":"Invalid data error: please include a message"},400)
 
     elif request.method == "GET":
         cards = Card.query.all()
@@ -158,14 +158,14 @@ def handle_board_cards(board_id):
             if 'message' in request_body: 
                 new_card = Card(message=request_body["message"],board_id = board_id)
                 if len(new_card.message) > 40: 
-                    return make_response("Message is over 40 characters", 404)
+                    return make_response({"details":"please keep the message below 40 characters"}, 400)
                 db.session.add(new_card)
                 db.session.commit()
                 response = new_card.card_response()
                 return jsonify(response), 201
 
             else:
-                return make_response ("Invalid data error: please include title and owner information",400)
+                return make_response ({"details":"please include a message"},400)
 
 
         elif request.method == "GET": 

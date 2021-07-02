@@ -45,20 +45,20 @@ def call_slack_api(new_card):
     channel_id = "buggy-puggy"
     # try:
     AFFIRMATIONS = [
-        f"So Fetch! New card #{new_card.card_id} posted: '{new_card.message}'", 
-        f"So Grool! New card #{new_card.card_id} posted: '{new_card.message}'", 
-        f"You go Glenn Coco! New card #{new_card.card_id} posted: '{new_card.message}'", 
-        f"The limit does not exist, but on here it is 40 characters (HERE)! New card #{new_card.card_id} posted!", 
-        f"Your face smells like peppermint (and other compliments) (HERE)! New card #{new_card.card_id} posted!", 
-        f"Get in loser. We're going compliment shopping (HERE)! New card #{new_card.card_id} posted!", 
+        f"So Fetch! New card #{new_card.card_id} posted: '{new_card.message}'.", 
+        f"So Grool! New card #{new_card.card_id} posted: '{new_card.message}'.", 
+        f"You go Glenn Coco! New card #{new_card.card_id} posted: '{new_card.message}'.", 
+        f"The limit does not exist, but on here it's 40 characters https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id} posted!", 
+        f"Your face smells like peppermint (and other compliments) https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id} posted!", 
+        f"Get in loser. We're going compliment shopping https://buggy-puggy-board.herokuapp.com/! New card #{new_card.card_id} posted!"
     ]
     affirmation_quote = AFFIRMATIONS[random.randint(0,len(AFFIRMATIONS)-1)]
     result = client.chat_postMessage(
         channel=channel_id,
-        text=f"{affirmation_quote}")
+        text=f"{affirmation_quote}"
+        )
         # text=f"New card #{new_card.card_id} posted! Check if someone talked smack about you! 💀 XOXO💋")
     return result
-
 
 @boards_bp.route("/<int:board_id>/cards", methods=["POST"])
 def add_new_card_to_board(board_id): 
@@ -79,7 +79,7 @@ def add_new_card_to_board(board_id):
             )
     db.session.add(new_card)
     db.session.commit()
-
+    call_slack_api(new_card)
     return make_response(new_card.to_json(), 201)
 
 @boards_bp.route("/<int:board_id>/cards", methods=["GET"], strict_slashes=False)

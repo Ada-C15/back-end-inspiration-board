@@ -6,6 +6,7 @@ from app import db
 import os
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+import random
 
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
@@ -78,7 +79,7 @@ def add_new_card_to_board(board_id):
             )
     db.session.add(new_card)
     db.session.commit()
-    # call_slack_api(new_card)
+
     return make_response(new_card.to_json(), 201)
 
 @boards_bp.route("/<int:board_id>/cards", methods=["GET"], strict_slashes=False)

@@ -8,7 +8,7 @@ class Card(db.Model):
     # child
     board_id = db.Column(db.Integer, db.ForeignKey('board.board_id'))
 
-    def get_resp(self):
+    def to_json(self):
         return {
             "card_id": self.card_id,
             "message": self.message,

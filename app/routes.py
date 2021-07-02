@@ -15,7 +15,7 @@ def get_all_boards():
 
     boards_list = []
     for board in query:
-        boards_list.append(board.get_resp())
+        boards_list.append(board.to_json())
 
     return jsonify(boards_list), 200
 
@@ -52,7 +52,7 @@ def get_all_card():
     query = Card.query.order_by(Card.card_id.asc())
     cards_list = []
     for card in query:
-        cards_list.append(card.get_resp())
+        cards_list.append(card.to_json())
     return jsonify(cards_list), 200
 
 # Get all cards associated with board
@@ -66,20 +66,46 @@ def get_cards(board_id):
             "error": True,
             "message": "Board does not exist."})
 
-    cards = Card.query.filter_by(board_id=board_id)
+    if not request.args:
+        cards = Card.query.filter_by(board_id=board_id)
+    else:
+        sort_query = request.args.get("sort", default=None, type=str)
 
-    cards_list = []
-    for card in cards:
-        cards_list.append(card.get_resp())
+        if sort_query == "id_asc":
+            cards = Card.query.filter_by(
+                board_id=board_id).order_by(
+                Card.card_id.asc())
+
+        elif sort_query == "id_desc":
+            cards = Card.query.filter_by(
+                board_id=board_id).order_by(
+                Card.card_id.desc())
+
+        elif sort_query == "likes_desc":
+            cards = Card.query.filter_by(
+                board_id=board_id).order_by(
+                Card.likes_count.desc())
+
+        elif sort_query == "likes_asc":
+            cards = Card.query.filter_by(
+                board_id=board_id).order_by(
+                Card.likes_count.asc())
+
+        else:
+            return jsonify(
+                "Parameter sort is not defined. Use ?sort=id_asc or ?sort=id_desc to sort the cards by id. Use ?sort=likes_asc or ?sort=likes_desc to sort the cards by number of likes."), 404
+
+    cards_list = [card.to_json() for card in cards]
 
     return (jsonify(cards_list), 201)
 
-# Create a card for a board
 
-
-# @cards_bp.route("/<board_id>", methods=["POST"])
 @boards_bp.route("/<board_id>/cards", methods=["POST"])
 def create_card(board_id):
+    """
+    Create a card for a board
+    @cards_bp.route("/<board_id>", methods=["POST"])
+    """
 
     board = Board.query.get_or_404(
         board_id,
@@ -107,6 +133,10 @@ def create_card(board_id):
 # DELETE /cards/<card_id>
 @cards_bp.route("/<card_id>", methods=["DELETE"])
 def delete_card(card_id):
+    """
+    Delete a card
+    DELETE /cards/<card_id>
+    """
     card = Card.query.get_or_404(
         card_id,
         description={
@@ -132,6 +162,6 @@ def update_card_like(card_id):
             "message": f"Card with id {card_id} does not exist."})
     card.update_likes()
     db.session.commit()
-    return make_response(card.get_resp(), 200)
+    return make_response(card.to_json(), 200)
     # return ({"details": f"Card {card_id} likes successfully updated by
     # +1."}, 200)

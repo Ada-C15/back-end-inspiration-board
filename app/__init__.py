@@ -9,6 +9,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 load_dotenv()
 
+slack_token = os.environ.get("TOKEN")
 
 def create_app():
     app = Flask(__name__)
@@ -19,6 +20,8 @@ def create_app():
 
     # Import models here for Alembic setup
     # from app.models.ExampleModel import ExampleModel
+    from app.models.board import Board
+    from app.models.card import Card
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -26,6 +29,12 @@ def create_app():
     # Register Blueprints here
     # from .routes import example_bp
     # app.register_blueprint(example_bp)
+    # board routes 
+    from .board_routes import board_bp
+    app.register_blueprint(board_bp)
+
+    from .card_routes import card_bp
+    app.register_blueprint(card_bp)
 
     CORS(app)
     return app

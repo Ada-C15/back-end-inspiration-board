@@ -1,7 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response
+import requests
 from app.models.card import Card
 from app.models.board import Board
 from app import db
+import os
 
 boards_bp = Blueprint("boards", __name__, url_prefix="/boards")
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
@@ -109,6 +111,20 @@ def get_cards(board_id):
 
     return (jsonify(cards_list), 201)
 
+# Call Slack API
+def slack_post_message(message):
+    url = 'https://slack.com/api/chat.postMessage'
+    params = {
+        "channel":"sand",
+        "text":f"Someone just made a new card that says {message}!"
+    }
+    header={
+        "Authorization": f"Bearer {os.environ.get('SLACK_TOKEN')}" }
+
+    req = requests.post(url, params=params, headers=header)
+    r = req.json()
+
+
 
 @boards_bp.route("/<board_id>/cards", methods=["POST"])
 def create_card(board_id):
@@ -134,8 +150,13 @@ def create_card(board_id):
         message=request_body["message"],
         board_id=board_id
     )
+    
     db.session.add(new_card)
     db.session.commit()
+
+    # msg = new_card["message"]
+    slack_post_message(new_card.message)
+
     return (jsonify(f"Posted new card on board {new_card.board_id}!"), 201)
 
 

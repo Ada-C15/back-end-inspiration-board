@@ -49,6 +49,15 @@ def get_boards():
     return jsonify(boards_response), 200
 
 
+@boards_bp.route("/<board_id>", methods= ["DELETE"], strict_slashes=False)
+def delete_board(board_id):
+    board = Board.query.get_or_404(board_id, "Incorrect id")
+    db.session.delete(board)
+    db.session.commit()
+
+    return make_response(f"Board with ID: {board_id} deleted", 200)
+
+
 @boards_bp.route("/<board_id>", methods=["GET"], strict_slashes=False)
 def get_one_board(board_id):
     board = Board.query.get_or_404(board_id, "Incorrect id")
@@ -112,6 +121,12 @@ def post_card():
         return make_response(response, 201)
 
 
+@cards_bp.route("/<card_id>", methods=["GET"], strict_slashes=False)
+def get_one_card(card_id):
+    card = Card.query.get_or_404(card_id, "Incorrect id")
+    return make_response(card.card_json(), 200)
+
+
 @cards_bp.route("/<card_id>", methods= ["DELETE"], strict_slashes=False)
 def delete_card(card_id):
     card = Card.query.get_or_404(card_id)
@@ -125,10 +140,12 @@ def delete_card(card_id):
 def add_likes(card_id):
     card = Card.query.get_or_404(card_id)
     form_data = request.get_json()
-    likes_count = form_data["likes_count"]
+    card.likes_count = form_data["likes_count"] + 1
     
     db.session.commit()
-
-    return make_response(f"Likes count has been updated to: {likes_count}", 200)
+    response = {
+        "likes": card.likes_count
+    }
+    return make_response(response, 200)
 
 

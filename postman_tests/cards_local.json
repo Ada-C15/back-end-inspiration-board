@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "caef0d3d-1998-41ae-a067-27ab10b002f5",
+		"name": "cards",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "post_card_valid_board",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"You look great!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/boards/1/cards",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"1",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post_card_invalid_board",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"You look great!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/boards/20/cards",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"20",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post_card_invalid_message",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"Test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/boards/1/cards",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"1",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_like_count_all_valid",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/boards/1/cards/1/like",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"1",
+						"cards",
+						"1",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_like_count_invalid_card",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/boards/1/cards/100/like",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"1",
+						"cards",
+						"100",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_like_count_invalid_board",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/boards/100/cards/1/like",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"100",
+						"cards",
+						"1",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_message",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"Looking great, sunshine!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:5000/boards/2/cards/3/edit",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"2",
+						"cards",
+						"3",
+						"edit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_card_all_valid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/boards/1/cards/1",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"1",
+						"cards",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_card_all_invalid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/boards/100/cards/100",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"boards",
+						"100",
+						"cards",
+						"100"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

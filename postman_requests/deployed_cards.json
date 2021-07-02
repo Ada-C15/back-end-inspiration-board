@@ -1,0 +1,253 @@
+{
+	"info": {
+		"_postman_id": "ff8264a6-8c16-4c1d-91d2-614ce8b121ab",
+		"name": "deployed_cards",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "post_card_valid_board",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"You look great!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/3/cards",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"3",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post_card_invalid_board",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"You look great!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/20/cards",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"20",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post_card_invalid_message",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"Testy\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/3/cards",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"3",
+						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_like_count_all_valid",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/3/cards/1/like",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"3",
+						"cards",
+						"1",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_like_count_invalid_card",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/3/cards/100/like",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"3",
+						"cards",
+						"100",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_like_count_invalid_board",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/100/cards/1/like",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"100",
+						"cards",
+						"1",
+						"like"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_card_message",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\" : \"Looking great, sunshine!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/3/cards/1/edit",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"3",
+						"cards",
+						"1",
+						"edit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_card_all_valid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/2/cards/3",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"2",
+						"cards",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_card_all_invalid",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://salty-sailors-inspo-board.herokuapp.com/boards/100/cards/100",
+					"protocol": "https",
+					"host": [
+						"salty-sailors-inspo-board",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"boards",
+						"100",
+						"cards",
+						"100"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

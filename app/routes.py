@@ -91,9 +91,19 @@ def get_cards(board_id):
                 board_id=board_id).order_by(
                 Card.likes_count.asc())
 
+        elif sort_query == "alphab_desc":
+            cards = Card.query.filter_by(
+                board_id=board_id).order_by(
+                Card.message.desc())
+
+        elif sort_query == "alphab_asc":
+            cards = Card.query.filter_by(
+                board_id=board_id).order_by(
+                Card.message.asc())
+
         else:
             return jsonify(
-                "Parameter sort is not defined. Use ?sort=id_asc or ?sort=id_desc to sort the cards by id. Use ?sort=likes_asc or ?sort=likes_desc to sort the cards by number of likes."), 404
+                "Parameter sort is not defined. Use ?sort=id_asc or ?sort=id_desc to sort the cards by id. Use ?sort=likes_asc or ?sort=likes_desc to sort the cards by number of likes. Use ?sort=alphab_asc or ?sort=alphab_desc to sort cards alphabetically"), 404
 
     cards_list = [card.to_json() for card in cards]
 

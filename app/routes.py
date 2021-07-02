@@ -69,7 +69,7 @@ def add_new_card_to_board(board_id):
         return jsonify({
             "details": "Invalid data" 
         }), 400
-    if len(request_body["message"]) > 60 or request_body["message"] == "": 
+    if len(request_body["message"]) > 40 or request_body["message"] == "": 
         return jsonify({
             "details": "Message must be between 1 to 40 characters long"
         }), 400
